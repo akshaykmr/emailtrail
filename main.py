@@ -173,7 +173,6 @@ def analyze_header(raw_headers):
     analysis['From'] = headers.get('From')
     analysis['To'] = headers.get('To')
     analysis['Cc'] = headers.get('Cc')
-    analysis['Content-Type'] = headers.get('Content-Type')
 
     if received is None:
         return None

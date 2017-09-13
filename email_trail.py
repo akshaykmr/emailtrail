@@ -129,31 +129,32 @@ def analyze_header(raw_headers):
     """
     sample output:
     {
+        'From': 'Jason Pruim <jpruim@contrax.com>',
+        'To': 'support+chat@kayako.com',
+        'Cc': None,
+        'delay_error_count': 0,
         'email_trail': [{'delay': 0,
-                        'from': '',
-                        'protocol': 'HTTP',
-                        'receivedBy': '10.66.88.201',
-                        'timestamp': 1450247123.0},
-                        {'delay': 40,
-                        'from': '',
-                        'protocol': 'SMTP',
-                        'receivedBy': 'mail-pa0-x231.google.com',
-                        'timestamp': 1450247163.0},
+                        'from': '[127.0.0.1] (localhost [52.2.54.97])',
+                        'protocol': '',
+                        'receivedBy': 'ismtpd0001p1iad1.sendgr',
+                        'timestamp': 1450278117.0},
                         {'delay': 0,
-                        'from': 'mail-pa0-x231.google.com (mail-pa0-x231.google.com. [2607:f8b0:400e:c03::231])',
+                        'from': '',
+                        'protocol': '',
+                        'receivedBy': 'filter0624p1mdw1.sendgr',
+                        'timestamp': 1450278117.0},
+                        {'delay': 0,
+                        'from': 'o1.email.kayako.com (o1.email.kayako.com. [192.254.121.229])',
                         'protocol': 'ESMTPS',
                         'receivedBy': 'mx.google.com',
-                        'timestamp': 1450247163.0},
+                        'timestamp': 1450249321.0},
                         {'delay': 0,
                         'from': '',
                         'protocol': 'SMTP',
                         'receivedBy': '10.66.248.3',
-                        'timestamp': 1450247163.0}],
-        'delay_error_count': 0,        
-        'delay_errors': [ {current: header, previous: header}, ... ] # pair of headers for which delay error could not be calculated        
+                        'timestamp': 1450249321.0}],
         'label_error_count': 0,
-        'label_errors': [ 'header', ...]  # list of header for which labels could not be extracted
-        'total_delay': 40
+        'total_delay': 0
     }
     """
     if raw_headers is None:

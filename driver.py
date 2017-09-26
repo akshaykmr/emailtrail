@@ -4,12 +4,19 @@ if __name__ == '__main__':
     """just a driver program to test the analysis for a given dataset
     
     my dataset:-
-        1. connect to support database with sequel pro
-        2. select source from mails LIMIT 10000;
+        1. connect to a database with sequel pro
+        2. select email source.
         3. export as xml
+
+    obviously, you will need to make some adjustments to iterate over email headers as per your data
 
     run:
     $ python email_trail.py > out.txt
+
+    This will create 3 files:
+        out.txt         : analysis for each email
+        delay_error.txt : pair of recieved-headers for which delay couldn't be calculated
+        label_error.txt : recieved-header for which host, protocol etc. was not extracted properly. (need a better regex for this)
     """
     from pprint import pprint
     import xmltodict

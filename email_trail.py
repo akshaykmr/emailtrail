@@ -13,13 +13,13 @@ def get_labels(header):
     given a 'Received' header
 
     {
-        'from': '186.250.116.162',       # the name the sending computer gave for itself 
+        'from': '186.250.116.162',       # the name the sending computer gave for itself
         'receivedBy': 'mx.google.com',   # the receiving computer's name
         'protocol': 'ESMTP',
         'timestamp': unix_epoch
     }
     """
-    split  = header.split(';')[0]
+    split = header.split(';')[0]
 
     # TODO: These regex have room for improvement
     if split.startswith('from'):
@@ -62,7 +62,7 @@ def strip_whitespace(string_list):
     return map(str.strip, string_list)
 
 def try_to_get_timestring(header):
-    """ 
+    """
     Tries to extract a timestring from a header
     Returns None or a String that *could* be a valid timestring
     """
@@ -81,7 +81,8 @@ def try_to_get_timestring(header):
     timestring = timestring.strip()
 
     # remove extra timezone name eg. "-0800 (PST)" -> "-0800"
-    if re.search('([+]|[-])([0-9]{4})[ ]([(]([a-zA-Z]{3,4})[)]|([a-zA-Z]{3,4}))', timestring) is not None:
+    pattern = '([+]|[-])([0-9]{4})[ ]([(]([a-zA-Z]{3,4})[)]|([a-zA-Z]{3,4}))'
+    if re.search(pattern, timestring) is not None:
         split = timestring.split(' ')
         split.pop()
         timestring = string.join(split, ' ')
@@ -161,14 +162,14 @@ def analyze_header(raw_headers):
         return None
 
     analysis = {}
-    
+
     # Will contain details for each hop
     email_trail = []
 
     # parse the headers
     parser = HeaderParser()
     headers = parser.parsestr(raw_headers.encode('ascii', 'ignore'))
-    # extract all 'Received' headers 
+    # extract all 'Received' headers
     received = headers.get_all('Received')
 
     analysis['From'] = headers.get('From')
@@ -183,7 +184,7 @@ def analyze_header(raw_headers):
 
     analysis['delay_error_count'] = 0
     analysis['delay_errors'] = []
-    
+
     # iterate through 'Recieved' header list and aggregate the emails path
     # through all the mail servers along with delay
     for i in xrange(len(received)):
@@ -201,7 +202,7 @@ def analyze_header(raw_headers):
             hop['receivedBy'] = labels['receivedBy']
             hop['protocol'] = labels['protocol']
             hop['timestamp'] = labels['timestamp']
-        except:
+        except: # TODO: get rid of this diaper
             analysis['label_error_count'] += 1
             analysis['label_errors'].append(current)
 

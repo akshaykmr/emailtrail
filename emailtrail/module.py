@@ -66,35 +66,47 @@ def try_to_get_timestring(header):
     Tries to extract a timestring from a header
     Returns None or a String that *could* be a valid timestring
     """
+    if type(header) != str:
+        raise TypeError
+
+    header = normalize_newlinechar(header)
     timestring = None
+
     split = header.split(';')
     if len(split) != 1:
-        timestring = strip_whitespace(split)[len(split) - 1]
+        timestring = split[len(split) - 1].strip().strip('\n').strip()
     elif len(split) == 1:
         # try to find timestring on last line
         split = header.split('\n')
-        timestring = strip_whitespace(split)[len(split) - 1]
+        timestring = split[len(split) - 1].strip().strip('\n').strip()
 
     # remove envelopes if any
-    timestring = re.sub('([(].*[)])', '', timestring)
-
-    timestring = timestring.strip()
-
-    # remove extra timezone name eg. "-0800 (PST)" -> "-0800"
-    pattern = '([+]|[-])([0-9]{4})[ ]([(]([a-zA-Z]{3,4})[)]|([a-zA-Z]{3,4}))'
-    if re.search(pattern, timestring) is not None:
-        split = timestring.split(' ')
-        split.pop()
-        timestring = string.join(split, ' ')
-
+    timestring = re.sub('([(].*[)])', '', timestring).strip()
+    timestring = strip_timezone_name(timestring)
     # replace -0000 to +0000
     timestring = re.sub('-0000', '+0000', timestring)
+
     return timestring
 
 
-def get_timestamp(header):
-    """ Extract a unix timestamp from the header """
-    timestring = try_to_get_timestring(header)
+def normalize_newlinechar(text):
+    return text.replace("\\n", "\n")
+
+
+def strip_timezone_name(timestring):
+    """ Removes extra timezone name at the end. eg: "-0800 (PST)" -> "-0800" """
+    pattern = '([+]|[-])([0-9]{4})[ ]([(]([a-zA-Z]{3,4})[)]|([a-zA-Z]{3,4}))'
+    if re.search(pattern, timestring) is None:
+        return timestring
+
+    # pop the timezone name
+    split = timestring.split(' ')
+    split.pop()
+    return string.join(split, ' ')
+
+
+def get_timestamp(timestring):
+    """ Convert a timestring to unix timestamp """
 
     if timestring is None:
         return None
@@ -108,14 +120,14 @@ def get_timestamp(header):
     return timestamp
 
 
-def get_path_delay(current, previous):
+def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring_parser=try_to_get_timestring):
     """
     Returns calculated delay (in seconds)  between two subsequent 'Received' headers
     Returns None if failure
     """
     # Try to extract the timestamp from these headers
-    current_timestamp = get_timestamp(current)
-    previous_timestamp = get_timestamp(previous)
+    current_timestamp = timestamp_parser(timestring_parser(current))
+    previous_timestamp = timestamp_parser(timestring_parser(previous))
 
     # can't do much here
     if current_timestamp is None or previous_timestamp is None:
@@ -171,6 +183,7 @@ def analyze_header(raw_headers):
     # parse the headers
     parser = HeaderParser()
     headers = parser.parsestr(raw_headers.encode('ascii', 'ignore'))
+
     # extract all 'Received' headers
     received = headers.get_all('Received')
 

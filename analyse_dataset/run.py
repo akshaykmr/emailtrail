@@ -18,11 +18,11 @@ This will create 3 files:
                       properly. (need a better regex for this)
 """
 import os
+from pprint import pprint
+import xmltodict
 from emailtrail import analyze_header
 
 if __name__ == '__main__':
-    from pprint import pprint
-    import xmltodict
 
     filename = 'query_result_10000.xml'
     dirname = 'dataset'

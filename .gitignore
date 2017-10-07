@@ -1,8 +1,8 @@
 .vscode
+**/*.pyc
+**/.cache
+**/__pycache__
+
 delay_error.txt
 label_error.txt
 out.txt
-*.pyc
-.cache
-__pycache__
-dataset/*.xml

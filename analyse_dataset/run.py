@@ -1,26 +1,35 @@
-from email_trail import analyze_header
+"""
+just a driver program to test the analysis on a collection of email headers
+
+my dataset:-
+    1. connect to a database with sequel pro
+    2. select email source.
+    3. export as xml
+
+you will need to make some adjustments to iterate over email headers as per your data
+
+run (from project root):
+$ python -m analyse_dataset.run > out.txt
+
+This will create 3 files:
+    out.txt         : analysis for each email
+    delay_error.txt : pair of recieved-headers for which delay couldn't be calculated
+    label_error.txt : recieved-header for which host, protocol etc. was not extracted
+                      properly. (need a better regex for this)
+"""
+import os
+from emailtrail import analyze_header
 
 if __name__ == '__main__':
-    """just a driver program to test the analysis for a given dataset
-    
-    my dataset:-
-        1. connect to a database with sequel pro
-        2. select email source.
-        3. export as xml
-
-    obviously, you will need to make some adjustments to iterate over email headers as per your data
-
-    run:
-    $ python email_trail.py > out.txt
-
-    This will create 3 files:
-        out.txt         : analysis for each email
-        delay_error.txt : pair of recieved-headers for which delay couldn't be calculated
-        label_error.txt : recieved-header for which host, protocol etc. was not extracted properly. (need a better regex for this)
-    """
     from pprint import pprint
     import xmltodict
-    with open('./dataset/query_result_10000.xml') as fd:
+
+    filename = 'query_result_10000.xml'
+    dirname = 'dataset'
+
+    current_dir = os.path.dirname(__file__)
+
+    with open(os.path.join(current_dir, dirname, filename)) as fd:
         doc = xmltodict.parse(fd.read())
 
     total_delay_error = 0

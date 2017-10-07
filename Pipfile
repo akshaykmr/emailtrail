@@ -5,9 +5,9 @@ name = "pypi"
 
 [dev-packages]
 
-pylint = "*"
 pytest = "*"
 xmltodict = "*"
+"flake8" = "*"
 
 
 [packages]

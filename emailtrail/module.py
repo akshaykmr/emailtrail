@@ -1,11 +1,9 @@
-"""
- Analyzes email headers to give some structured information
-"""
 from email.parser import HeaderParser
 import re
 import time
 import string
 import dateparser
+
 
 def extract_labels(header):
     """
@@ -51,15 +49,17 @@ def extract_labels(header):
         map(str.strip, labels[0])
     )
     return ({
-        'from'      : labels[0],
+        'from': labels[0],
         'receivedBy': labels[1],
-        'protocol'  : labels[2],
-        'timestamp' : get_timestamp(header)
+        'protocol': labels[2],
+        'timestamp': get_timestamp(header)
     })
+
 
 def strip_whitespace(string_list):
     """ strip whitespace from each list item """
     return map(str.strip, string_list)
+
 
 def try_to_get_timestring(header):
     """
@@ -90,6 +90,7 @@ def try_to_get_timestring(header):
     # replace -0000 to +0000
     timestring = re.sub('-0000', '+0000', timestring)
     return timestring
+
 
 def get_timestamp(header):
     """ Extract a unix timestamp from the header """
@@ -126,6 +127,7 @@ def get_path_delay(current, previous):
 
     return delay
 
+
 def analyze_header(raw_headers):
     """
     sample output:
@@ -134,7 +136,7 @@ def analyze_header(raw_headers):
         'To': 'support+chat@kayako.com',
         'Cc': None,
         'delay_error_count': 0,
-        'email_trail': [{'delay': 0,
+        'trail': [{'delay': 0,
                         'from': '[127.0.0.1] (localhost [52.2.54.97])',
                         'protocol': '',
                         'receivedBy': 'ismtpd0001p1iad1.sendgr',
@@ -164,7 +166,7 @@ def analyze_header(raw_headers):
     analysis = {}
 
     # Will contain details for each hop
-    email_trail = []
+    trail = []
 
     # parse the headers
     parser = HeaderParser()
@@ -190,7 +192,7 @@ def analyze_header(raw_headers):
     for i in xrange(len(received)):
         current = received[i]
         try:
-            previous = received[i+1]
+            previous = received[i + 1]
         except IndexError:
             previous = None
 
@@ -202,7 +204,7 @@ def analyze_header(raw_headers):
             hop['receivedBy'] = labels['receivedBy']
             hop['protocol'] = labels['protocol']
             hop['timestamp'] = labels['timestamp']
-        except: # TODO: get rid of this diaper
+        except:  # TODO: get rid of this diaper
             analysis['label_error_count'] += 1
             analysis['label_errors'].append(current)
 
@@ -212,19 +214,19 @@ def analyze_header(raw_headers):
             if delay is None:
                 analysis['delay_error_count'] += 1
                 analysis['delay_errors'].append({
-                    'current' : current,
+                    'current': current,
                     'previous': previous
                 })
             else:
                 hop['delay'] = delay
 
-        email_trail.append(hop)
+        trail.append(hop)
 
     # sort in chronological order
-    email_trail.reverse()
+    trail.reverse()
     analysis['label_errors'].reverse()
     analysis['delay_errors'].reverse()
 
-    analysis['email_trail'] = email_trail
-    analysis['total_delay'] = sum(map(lambda hop: hop['delay'], email_trail))
+    analysis['trail'] = trail
+    analysis['total_delay'] = sum(map(lambda hop: hop['delay'], trail))
     return analysis

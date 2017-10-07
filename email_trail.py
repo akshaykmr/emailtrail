@@ -7,7 +7,7 @@ import time
 import string
 import dateparser
 
-def get_labels(header):
+def extract_labels(header):
     """
     Gives structured info of mail servers involved and the protocol used
     given a 'Received' header
@@ -197,7 +197,7 @@ def analyze_header(raw_headers):
         hop = {}
 
         try:
-            labels = get_labels(current)
+            labels = extract_labels(current)
             hop['from'] = labels['from']
             hop['receivedBy'] = labels['receivedBy']
             hop['protocol'] = labels['protocol']

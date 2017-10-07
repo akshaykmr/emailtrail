@@ -20,7 +20,7 @@ if __name__ == '__main__':
     """
     from pprint import pprint
     import xmltodict
-    with open('/Users/akshaykumar/query_result_10000.xml') as fd:
+    with open('./dataset/query_result_10000.xml') as fd:
         doc = xmltodict.parse(fd.read())
 
     total_delay_error = 0

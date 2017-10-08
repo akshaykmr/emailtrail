@@ -20,7 +20,7 @@ This will create 3 files:
 import os
 from pprint import pprint
 import xmltodict
-from emailtrail import analyze_header
+from emailtrail import analyze
 
 if __name__ == '__main__':
 
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     for row in doc['support_novo']['custom']['row']:
 
         mail_header = row['source']
-        analysis = analyze_header(mail_header)
+        analysis = analyze(mail_header)
 
         if analysis is not None:
             total_delay_error += analysis['delay_error_count']

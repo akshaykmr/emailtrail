@@ -56,6 +56,8 @@ class TestTimestampParsing():
 
     def test_unix_timestamp_for_valid_timestring(self):
         assert 1450263874 == get_timestamp('Wed, 16 Dec 2015 16:34:34 -0600')
+        assert 1450284562 == get_timestamp('Wed, 16 Dec 2015 22:19:22.596 +0000')
+        assert 1450433247 == get_timestamp('Fri, 18 Dec 2015 15:37:27 GMT')
 
 
 def test_label_extraction():
@@ -97,7 +99,7 @@ def test_label_extraction():
                 'from': '[127.0.0.1] (localhost [52.2.54.97])',
                 'receivedBy': 'ismtpd0002p1iad1.sendgrid.net',
                 'protocol': 'ESMTP',
-                'timestamp': 1337
+                'timestamp': 1450284562
             }
         ],
         [
@@ -106,7 +108,7 @@ def test_label_extraction():
                 'from': '',
                 'receivedBy': 'mailr.blah.com',
                 'protocol': '',
-                'timestamp': 1337
+                'timestamp': 1450433247
             }
         ]
     ]

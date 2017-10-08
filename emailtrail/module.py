@@ -154,7 +154,7 @@ def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring
     return calculate_delay(current_timestamp, previous_timestamp)
 
 
-def analyze_header(raw_headers):
+def analyze(raw_headers):
     """
     sample output:
         {

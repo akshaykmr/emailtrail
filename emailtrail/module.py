@@ -52,7 +52,7 @@ def extract_labels(header):
         'from': labels[0],
         'receivedBy': labels[1],
         'protocol': labels[2],
-        'timestamp': get_timestamp(header)
+        'timestamp': get_timestamp(try_to_get_timestring(header))
     })
 
 
@@ -117,60 +117,77 @@ def get_timestamp(timestring):
         else:
             timestamp = time.mktime(date.timetuple())
 
-    return timestamp
+    return int(timestamp)
+
+
+def calculate_delay(current_timestamp, previous_timestamp):
+    """ Returns delay for two unixtimestamps """
+    delay = current_timestamp - previous_timestamp
+    if delay < 0:
+        # It's not possible for the current server to recieve the email before previous one
+        # It means that either one or both of the servers clocks are off.
+        # We assume a delay of 0 in this case
+        delay = 0
+    return delay
 
 
 def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring_parser=try_to_get_timestring):
     """
     Returns calculated delay (in seconds)  between two subsequent 'Received' headers
-    Returns None if failure
+    Returns None if not determinable
     """
     # Try to extract the timestamp from these headers
     current_timestamp = timestamp_parser(timestring_parser(current))
     previous_timestamp = timestamp_parser(timestring_parser(previous))
 
-    # can't do much here
     if current_timestamp is None or previous_timestamp is None:
+        # parsing must have been unsuccessful, can't do much here
         return None
 
-    delay = int(current_timestamp - previous_timestamp)
-    if delay < 0:
-        delay = 0
-
-    return delay
+    return calculate_delay(current_timestamp, previous_timestamp)
 
 
 def analyze_header(raw_headers):
     """
     sample output:
-    {
-        'From': 'Jason Pruim <jpruim@contrax.com>',
-        'To': 'support+chat@kayako.com',
-        'Cc': None,
-        'delay_error_count': 0,
-        'trail': [{'delay': 0,
-                        'from': '[127.0.0.1] (localhost [52.2.54.97])',
-                        'protocol': '',
-                        'receivedBy': 'ismtpd0001p1iad1.sendgr',
-                        'timestamp': 1450278117.0},
-                        {'delay': 0,
-                        'from': '',
-                        'protocol': '',
-                        'receivedBy': 'filter0624p1mdw1.sendgr',
-                        'timestamp': 1450278117.0},
-                        {'delay': 0,
-                        'from': 'o1.email.kayako.com (o1.email.kayako.com. [192.254.121.229])',
-                        'protocol': 'ESMTPS',
-                        'receivedBy': 'mx.google.com',
-                        'timestamp': 1450249321.0},
-                        {'delay': 0,
-                        'from': '',
-                        'protocol': 'SMTP',
-                        'receivedBy': '10.66.248.3',
-                        'timestamp': 1450249321.0}],
-        'label_error_count': 0,
-        'total_delay': 0
-    }
+        {
+            'Cc': None,
+            'From': 'kungfupanda (Do not reply) <noreply@kungfupanda.com>',
+            'To': 'sales.outbound@kungfupanda.com',
+            'delay_error_count': 0,
+            'label_error_count': 0,
+            'total_delay': 1,
+            'trail': [
+                {
+                    'delay': 0,
+                    'from': '[127.0.0.1] (localhost [75.126.176.50])',
+                    'protocol': '',
+                    'receivedBy': 'ismtpd0009p1las1.sendgr',
+                    'timestamp': 1452602703
+                },
+                {
+                    'delay': 0,
+                    'from': '',
+                    'protocol': '',
+                    'receivedBy': 'filter0192p1las1.sendgr',
+                    'timestamp': 1452602703
+                },
+                {
+                    'delay': 0,
+                    'from': 'o1.email.kungfupanda.com (o1.email.kungfupanda.com. [192.254.121.229])',
+                    'protocol': 'ESMTPS',
+                    'receivedBy': 'mx.google.com',
+                    'timestamp': 1452573904
+                },
+                {
+                    'delay': 1,
+                    'from': '',
+                    'protocol': 'SMTP',
+                    'receivedBy': '10.31.236.194',
+                    'timestamp': 1452573905
+                }
+            ]
+        }
     """
     if raw_headers is None:
         return None

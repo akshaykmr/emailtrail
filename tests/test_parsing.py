@@ -1,6 +1,6 @@
 import pytest
 
-from emailtrail import try_to_get_timestring, strip_timezone_name
+from emailtrail import try_to_get_timestring, strip_timezone_name, get_timestamp
 
 
 class TestTimestringParsing():
@@ -44,4 +44,15 @@ class TestTimestringParsing():
 
         for case in cases:
             assert case[1] == try_to_get_timestring(case[0])
-       
+
+
+class TestTimestampParsing():
+    def test_none_input(self):
+        # should return none if the input was none
+        assert None is get_timestamp(None)
+
+    def test_unsupported_timestring_returns_none(self):
+        assert None is get_timestamp('time is 12:30 pm, blah')
+
+    def test_unix_timestamp_for_valid_timestring(self):
+        assert 1450263874 == get_timestamp('Wed, 16 Dec 2015 16:34:34 -0600')

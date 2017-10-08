@@ -232,14 +232,13 @@ def generate_stats(trail):
 def analyze(raw_headers):
     """
     sample output:
-
     {
         'From': 'Josh <foo.josh@gmail.com>',
         'To': 'gossip+chat@kungfu.com',
         'Cc': None,
         'delay_error_count': 0,
         'label_error_count': 0,
-        'total_delay': 0,
+        'total_delay': 2,
         'trail': [
             {
                 'delay': 0,
@@ -266,7 +265,7 @@ def analyze(raw_headers):
                 'label_error': None,
                 'protocol': 'ESMTPS',
                 'receivedBy': 'mx.google.com',
-                'timestamp': 1451496447
+                'timestamp': 1451525246
             },
             {
                 'delay': 0,
@@ -275,7 +274,7 @@ def analyze(raw_headers):
                 'label_error': None,
                 'protocol': 'SMTP',
                 'receivedBy': '10.66.248.3',
-                'timestamp': 1451496447
+                'timestamp': 1451525246
             }
         ]
     }

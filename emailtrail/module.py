@@ -58,11 +58,6 @@ def extract_labels(header):
     })
 
 
-def strip_whitespace(string_list):
-    """ strip whitespace from each list item """
-    return map(str.strip, string_list)
-
-
 def try_to_get_timestring(header):  # TODO: rename this func
     """
     Tries to extract a timestring from a header

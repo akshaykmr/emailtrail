@@ -13,7 +13,7 @@ class TestDelayCalculation():
 def test_path_delay():
     cases = [
         # [current_header,  previous_header, expected_delay]
-        [   
+        [
             # has delay
             'by wr-out-0506.google.com with SMTP id 69so1099905wra for ...; Sat, 22 Mar 2007 13:02:18 -0700 (PDT)',
             'by 10.114.60.19 with SMTP id i19mr754361waa.1174593725445; Thu, 22 Mar 2007 13:02:05 -0700 (PDT)',

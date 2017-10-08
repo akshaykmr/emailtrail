@@ -17,7 +17,7 @@ def extract_labels(header):
         'timestamp': unix_epoch
     }
     """
-    split = header.split(';')[0]
+    split = cleanup_text(header.split(';')[0])
 
     # TODO: These regex have room for improvement
     if split.startswith('from'):
@@ -46,7 +46,7 @@ def extract_labels(header):
 
     labels = map(
         lambda x: x.replace('\n', ' '),
-        map(str.strip, labels[0])
+        map(cleanup_text, labels[0])
     )
     return ({
         'from': labels[0],
@@ -61,7 +61,7 @@ def strip_whitespace(string_list):
     return map(str.strip, string_list)
 
 
-def try_to_get_timestring(header):
+def try_to_get_timestring(header):  # TODO: rename this func
     """
     Tries to extract a timestring from a header
     Returns None or a String that *could* be a valid timestring
@@ -69,24 +69,31 @@ def try_to_get_timestring(header):
     if type(header) != str:
         raise TypeError
 
-    header = normalize_newlinechar(header)
+    header = cleanup_text(header)
     timestring = None
 
     split = header.split(';')
     if len(split) != 1:
-        timestring = split[len(split) - 1].strip().strip('\n').strip()
+        timestring = cleanup_text(split[len(split) - 1])
     elif len(split) == 1:
         # try to find timestring on last line
         split = header.split('\n')
-        timestring = split[len(split) - 1].strip().strip('\n').strip()
+        timestring = cleanup_text(split[len(split) - 1])
 
     # remove envelopes if any
-    timestring = re.sub('([(].*[)])', '', timestring).strip()
+    timestring = cleanup_text(re.sub('([(].*[)])', '', timestring))
     timestring = strip_timezone_name(timestring)
     # replace -0000 to +0000
     timestring = re.sub('-0000', '+0000', timestring)
 
     return timestring
+
+
+def cleanup_text(text):
+    """
+    normalizes newline chars, strips whitespace, removes newline chars from the ends.
+    """
+    return normalize_newlinechar(text).strip().strip('\n').strip()
 
 
 def normalize_newlinechar(text):

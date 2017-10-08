@@ -45,20 +45,21 @@ if __name__ == '__main__':
             total_label_error += analysis['label_error_count']
 
             # Print the headers with label errors
-            label_errors = analysis.pop('label_errors', [])
             with open("label_error.txt", "a") as myfile:
-                for header in label_errors:
-                    myfile.write(header)
-                    myfile.write('\n\n\n---------------------------------------------\n\n\n')
+                for hop in analysis['trail']:
+                    if hop['label_error']:
+                        myfile.write(hop['label_error'])
+                        myfile.write('\n\n\n---------------------------------------------\n\n\n')
 
             # Print the pair of headers we could not calculate the delay for
-            delay_errors = analysis.pop('delay_errors', [])
             with open("delay_error.txt", "a") as myfile:
-                for header_pair in delay_errors:
-                    myfile.write(header_pair['current'])
-                    myfile.write('\n')
-                    myfile.write(header_pair['previous'])
-                    myfile.write('\n\n\n---------------------------------------------\n\n\n')
+                for hop in analysis['trail']:
+                    if hop['delay_error']:
+                        header_pair = hop['delay_error']
+                        myfile.write(header_pair['current'])
+                        myfile.write('\n')
+                        myfile.write(header_pair['previous'])
+                        myfile.write('\n\n\n---------------------------------------------\n\n\n')
 
             pprint(analysis)
             print '\n\n----------------------------------------\n\n'

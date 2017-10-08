@@ -157,52 +157,56 @@ def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring
 def analyze(raw_headers):
     """
     sample output:
-        {
-            'Cc': None,
-            'From': 'kungfupanda (Do not reply) <noreply@kungfupanda.com>',
-            'To': 'sales.outbound@kungfupanda.com',
-            'delay_error_count': 0,
-            'label_error_count': 0,
-            'total_delay': 1,
-            'trail': [
-                {
-                    'delay': 0,
-                    'from': '[127.0.0.1] (localhost [75.126.176.50])',
-                    'protocol': '',
-                    'receivedBy': 'ismtpd0009p1las1.sendgr',
-                    'timestamp': 1452602703
-                },
-                {
-                    'delay': 0,
-                    'from': '',
-                    'protocol': '',
-                    'receivedBy': 'filter0192p1las1.sendgr',
-                    'timestamp': 1452602703
-                },
-                {
-                    'delay': 0,
-                    'from': 'o1.email.kungfupanda.com (o1.email.kungfupanda.com. [192.254.121.229])',
-                    'protocol': 'ESMTPS',
-                    'receivedBy': 'mx.google.com',
-                    'timestamp': 1452573904
-                },
-                {
-                    'delay': 1,
-                    'from': '',
-                    'protocol': 'SMTP',
-                    'receivedBy': '10.31.236.194',
-                    'timestamp': 1452573905
-                }
-            ]
-        }
+
+    {
+        'From': 'Josh <foo.josh@gmail.com>',
+        'To': 'gossip+chat@kungfu.com',
+        'Cc': None,
+        'delay_error_count': 0,
+        'label_error_count': 0,
+        'total_delay': 0,
+        'trail': [
+            {
+                'delay': 0,
+                'delay_error': None,
+                'from': '[127.0.0.1] (localhost [52.2.54.97])',
+                'label_error': None,
+                'protocol': '',
+                'receivedBy': 'ismtpd0002p1iad1.sendgr',
+                'timestamp': 1451525244
+            },
+            {
+                'delay': 0,
+                'delay_error': None,
+                'from': '',
+                'label_error': None,
+                'protocol': '',
+                'receivedBy': 'filter0441p1mdw1.sendgr',
+                'timestamp': 1451525244
+            },
+            {
+                'delay': 0,
+                'delay_error': None,
+                'from': 'o1.email.kungfu.com (o1.email.kungfu.com. [192.254.121.229])',
+                'label_error': None,
+                'protocol': 'ESMTPS',
+                'receivedBy': 'mx.google.com',
+                'timestamp': 1451496447
+            },
+            {
+                'delay': 0,
+                'delay_error': None,
+                'from': '',
+                'label_error': None,
+                'protocol': 'SMTP',
+                'receivedBy': '10.66.248.3',
+                'timestamp': 1451496447
+            }
+        ]
+    }
     """
     if raw_headers is None:
         return None
-
-    analysis = {}
-
-    # Will contain details for each hop
-    trail = []
 
     # parse the headers
     parser = HeaderParser()
@@ -211,18 +215,18 @@ def analyze(raw_headers):
     # extract all 'Received' headers
     received = headers.get_all('Received')
 
-    analysis['From'] = headers.get('From')
-    analysis['To'] = headers.get('To')
-    analysis['Cc'] = headers.get('Cc')
-
     if received is None:
         return None
 
-    analysis['label_error_count'] = 0
-    analysis['label_errors'] = []
-
-    analysis['delay_error_count'] = 0
-    analysis['delay_errors'] = []
+    trail = []  # Will contain details for each hop
+    analysis = {
+        'From': headers.get('From'),
+        'To': headers.get('To'),
+        'Cc': headers.get('Cc'),
+        'trail': trail,
+        'label_error_count': 0,
+        'delay_error_count': 0
+    }
 
     # iterate through 'Recieved' header list and aggregate the emails path
     # through all the mail servers along with delay
@@ -233,27 +237,26 @@ def analyze(raw_headers):
         except IndexError:
             previous = None
 
-        hop = {}
+        hop = {
+            'delay': 0,
+            'label_error': None,
+            'delay_error': None
+        }
 
         try:
-            labels = extract_labels(current)
-            hop['from'] = labels['from']
-            hop['receivedBy'] = labels['receivedBy']
-            hop['protocol'] = labels['protocol']
-            hop['timestamp'] = labels['timestamp']
-        except:  # TODO: get rid of this diaper
+            hop.update(extract_labels(current))
+        except IndexError:  # FIXME
             analysis['label_error_count'] += 1
-            analysis['label_errors'].append(current)
+            hop['label_error'] = current
 
-        hop['delay'] = 0
         if previous is not None:
             delay = get_path_delay(current, previous)
             if delay is None:
                 analysis['delay_error_count'] += 1
-                analysis['delay_errors'].append({
+                hop['delay_error'] = {
                     'current': current,
                     'previous': previous
-                })
+                }
             else:
                 hop['delay'] = delay
 
@@ -261,9 +264,5 @@ def analyze(raw_headers):
 
     # sort in chronological order
     trail.reverse()
-    analysis['label_errors'].reverse()
-    analysis['delay_errors'].reverse()
-
-    analysis['trail'] = trail
     analysis['total_delay'] = sum(map(lambda hop: hop['delay'], trail))
     return analysis

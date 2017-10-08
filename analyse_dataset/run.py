@@ -1,5 +1,5 @@
 """
-just a driver program to test the analysis on a collection of email headers
+just a quick and dirty driver program to test the analysis on a collection of email headers
 
 my dataset:-
     1. connect to a database with sequel pro

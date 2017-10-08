@@ -1,4 +1,9 @@
-from emailtrail import strip_whitespace, cleanup_text
+from emailtrail import strip_whitespace, cleanup_text, decode_and_convert_to_unicode
+
+
+def test_decode_and_convert_to_unicode():
+    text = '=?utf-8?Q?Capitalism=E2=84=A2?= <money@rules.com>'
+    assert u'Capitalism\u2122 <money@rules.com>' == decode_and_convert_to_unicode(text)
 
 
 class TestWhiteSpaceStripping:

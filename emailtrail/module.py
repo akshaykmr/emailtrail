@@ -1,3 +1,5 @@
+import sys
+from email.header import decode_header, make_header
 from email.parser import HeaderParser
 import re
 import time
@@ -138,6 +140,18 @@ def calculate_delay(current_timestamp, previous_timestamp):
     return delay
 
 
+def decode_and_convert_to_unicode(text):
+    try:
+        header = make_header(decode_header(text))
+        if (sys.version_info > (3, 0)):
+            return str(header)
+        else:
+            return unicode(header)
+    except Exception:
+        # Illegal encoding sequence used in the email header, return as is
+        return text
+
+
 def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring_parser=try_to_get_timestring):
     """
     Returns calculated delay (in seconds)  between two subsequent 'Received' headers
@@ -220,9 +234,9 @@ def analyze(raw_headers):
 
     trail = []  # Will contain details for each hop
     analysis = {
-        'From': headers.get('From'),
-        'To': headers.get('To'),
-        'Cc': headers.get('Cc'),
+        'From': decode_and_convert_to_unicode(headers.get('From')),
+        'To': decode_and_convert_to_unicode(headers.get('To')),
+        'Cc': decode_and_convert_to_unicode(headers.get('Cc')),
         'trail': trail,
         'label_error_count': 0,
         'delay_error_count': 0

@@ -108,7 +108,6 @@ def strip_timezone_name(timestring):
     if re.search(pattern, timestring) is None:
         return timestring
 
-    # pop the timezone name
     split = timestring.split(' ')
     split.pop()
     return string.join(split, ' ')
@@ -157,7 +156,7 @@ def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring
     Returns calculated delay (in seconds)  between two subsequent 'Received' headers
     Returns None if not determinable
     """
-    # Try to extract the timestamp from these headers
+
     current_timestamp = timestamp_parser(timestring_parser(current))
     previous_timestamp = timestamp_parser(timestring_parser(previous))
 
@@ -166,6 +165,73 @@ def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring
         return None
 
     return calculate_delay(current_timestamp, previous_timestamp)
+
+
+def generate_trail(received):
+    """
+    Takes a list of `recieved` headers and
+    creates the email trail (structured information of hops in transit)
+    """
+    if received is None:
+        return None
+
+    trail = []
+
+    for i in xrange(len(received)):
+        current = received[i]
+        try:
+            previous = received[i + 1]
+        except IndexError:
+            previous = None
+
+        hop = {
+            'delay': 0,
+            'label_error': None,
+            'delay_error': None
+        }
+
+        try:
+            hop.update(extract_labels(current))
+        except IndexError:  # FIXME
+            hop['label_error'] = current
+
+        if previous is not None:
+            delay = get_path_delay(current, previous)
+            if delay is None:
+                hop['delay_error'] = {
+                    'current': current,
+                    'previous': previous
+                }
+            else:
+                hop['delay'] = delay
+
+        trail.append(hop)
+
+    # sort in chronological order for readability
+    trail.reverse()
+    return trail
+
+
+def generate_stats(trail):
+    """ sums delay and errors """
+    if trail is None:
+        return None
+
+    stats = {
+        'total_delay': 0,
+        'delay_error_count': 0,
+        'label_error_count': 0
+    }
+
+    for hop in trail:
+        stats['total_delay'] += hop['delay']
+
+        if hop['delay_error']:
+            stats['delay_error_count'] += 1
+        if hop['label_error']:
+            stats['label_error_count'] += 1
+
+    return stats
 
 
 def analyze(raw_headers):
@@ -229,54 +295,15 @@ def analyze(raw_headers):
     # extract all 'Received' headers
     received = headers.get_all('Received')
 
-    if received is None:
-        return None
+    trail = generate_trail(received)
+    stats = generate_stats(trail)
 
-    trail = []  # Will contain details for each hop
     analysis = {
         'From': decode_and_convert_to_unicode(headers.get('From')),
         'To': decode_and_convert_to_unicode(headers.get('To')),
         'Cc': decode_and_convert_to_unicode(headers.get('Cc')),
         'trail': trail,
-        'label_error_count': 0,
-        'delay_error_count': 0
+        'stats': stats
     }
 
-    # iterate through 'Recieved' header list and aggregate the emails path
-    # through all the mail servers along with delay
-    for i in xrange(len(received)):
-        current = received[i]
-        try:
-            previous = received[i + 1]
-        except IndexError:
-            previous = None
-
-        hop = {
-            'delay': 0,
-            'label_error': None,
-            'delay_error': None
-        }
-
-        try:
-            hop.update(extract_labels(current))
-        except IndexError:  # FIXME
-            analysis['label_error_count'] += 1
-            hop['label_error'] = current
-
-        if previous is not None:
-            delay = get_path_delay(current, previous)
-            if delay is None:
-                analysis['delay_error_count'] += 1
-                hop['delay_error'] = {
-                    'current': current,
-                    'previous': previous
-                }
-            else:
-                hop['delay'] = delay
-
-        trail.append(hop)
-
-    # sort in chronological order
-    trail.reverse()
-    analysis['total_delay'] = sum(map(lambda hop: hop['delay'], trail))
     return analysis

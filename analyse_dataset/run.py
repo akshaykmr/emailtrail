@@ -40,9 +40,9 @@ if __name__ == '__main__':
         mail_header = row['source']
         analysis = analyze(mail_header)
 
-        if analysis is not None:
-            total_delay_error += analysis['delay_error_count']
-            total_label_error += analysis['label_error_count']
+        if analysis is not None and analysis['trail'] is not None:
+            total_delay_error += analysis['stats']['delay_error_count']
+            total_label_error += analysis['stats']['label_error_count']
 
             # Print the headers with label errors
             with open("label_error.txt", "a") as myfile:

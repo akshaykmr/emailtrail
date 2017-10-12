@@ -1,10 +1,10 @@
-import sys
-from email.header import decode_header, make_header
 from email.parser import HeaderParser
 import re
 import time
 import string
 import dateparser
+
+from utils import cleanup_text, decode_and_convert_to_unicode
 
 
 def extract_labels(header):
@@ -86,17 +86,6 @@ def try_to_get_timestring(header):  # TODO: rename this func
     return timestring
 
 
-def cleanup_text(text):
-    """
-    normalizes newline chars, strips whitespace, removes newline chars from the ends.
-    """
-    return normalize_newlinechar(text).strip().strip('\n').strip()
-
-
-def normalize_newlinechar(text):
-    return text.replace("\\n", "\n")
-
-
 def strip_timezone_name(timestring):
     """ Removes extra timezone name at the end. eg: "-0800 (PST)" -> "-0800" """
     pattern = '([+]|[-])([0-9]{4})[ ]([(]([a-zA-Z]{3,4})[)]|([a-zA-Z]{3,4}))'
@@ -132,18 +121,6 @@ def calculate_delay(current_timestamp, previous_timestamp):
         # We assume a delay of 0 in this case
         delay = 0
     return delay
-
-
-def decode_and_convert_to_unicode(text):
-    try:
-        header = make_header(decode_header(text))
-        if (sys.version_info > (3, 0)):
-            return str(header)
-        else:
-            return unicode(header)
-    except Exception:
-        # Illegal encoding sequence used in the email header, return as is
-        return text
 
 
 def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring_parser=try_to_get_timestring):

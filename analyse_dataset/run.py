@@ -14,7 +14,7 @@ $ python -m analyse_dataset.run > out.txt
 import os
 from pprint import pprint
 import xmltodict
-from emailtrail import analyze
+from emailtrail import analyse
 
 if __name__ == '__main__':
 
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     for row in doc['support_novo']['custom']['row']:
 
         mail_header = row['source']
-        analysis = analyze(mail_header)
+        analysis = analyse(mail_header)
 
         if analysis is not None and analysis['trail'] is not None:
             pprint(analysis)

@@ -1,4 +1,4 @@
-from emailtrail import analyze, analyse_hop, set_delay_information
+from emailtrail import analyse, analyse_hop, set_delay_information
 
 
 def test_hop_analysis():
@@ -131,4 +131,4 @@ A business opportunity awaits
         ]
     }
 
-    assert expected_analysis == analyze(headers)
+    assert expected_analysis == analyse(headers)

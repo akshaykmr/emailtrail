@@ -7,7 +7,7 @@ import dateparser
 from utils import cleanup_text, decode_and_convert_to_unicode
 
 
-def analyze(raw_headers):
+def analyse(raw_headers):
     """
     sample output:
     {

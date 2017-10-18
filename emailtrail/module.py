@@ -6,16 +6,18 @@ import dateparser
 
 from utils import cleanup_text, decode_and_convert_to_unicode
 
+
 def extract_from_label(header):
     """ Get the hostname associated with `from` """
     match = re.findall(
-      """
-      from\s+
-      (.*?)
-      (?:\s+|$)
-      """, header, re.DOTALL | re.X)
+        """
+        from\s+
+        (.*?)
+        (?:\s+|$)
+        """, header, re.DOTALL | re.X)
 
     return match[0] if match else ''
+
 
 def extract_recieved_by_label(header):
     """ Get the hostname associated with `by` """
@@ -27,9 +29,10 @@ def extract_recieved_by_label(header):
         match = re.findall('from\s+(?:.*?)\s+by\s+(.*?)(?:\s+|$)', header)
         return match[0] if match else ''
     elif header.startswith('by'):
-        match  = re.findall('by\s+(.*?)(?:\s+|$)', header)
+        match = re.findall('by\s+(.*?)(?:\s+|$)', header)
         return match[0] if match else ''
     return ''
+
 
 def extract_protocol_used(header):
     """ Get the protocol used. eg. SMTP, HTTP etc. """
@@ -66,6 +69,7 @@ def extract_protocol_used(header):
 
     return cleanup_text(protocol)
 
+
 def try_to_get_timestring(header):  # TODO: rename this func
     """
     Tries to extract a timestring from a header
@@ -84,7 +88,6 @@ def try_to_get_timestring(header):  # TODO: rename this func
         # try to find timestring on last line
         split = header.split('\n')
         timestring = cleanup_text(split[len(split) - 1])
-
 
     timestring = cleanup_text(remove_details(timestring))
     timestring = strip_timezone_name(timestring)
@@ -124,6 +127,9 @@ def get_timestamp(timestring):
 
 def calculate_delay(current_timestamp, previous_timestamp):
     """ Returns delay for two unixtimestamps """
+    if current_timestamp is None or previous_timestamp is None:
+        return 0
+
     delay = current_timestamp - previous_timestamp
     if delay < 0:
         # It's not possible for the current server to recieve the email before previous one

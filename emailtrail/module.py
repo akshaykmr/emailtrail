@@ -6,6 +6,38 @@ import dateparser
 
 from utils import cleanup_text, decode_and_convert_to_unicode
 
+def extract_from_label(header):
+    if header.startswith('by'):
+        return ''
+
+    match = re.findall(
+      """
+      from\s+
+      (.*?)
+      ((\s+)|$)
+      """, header, re.DOTALL | re.X)
+
+    if len(match) == 1:
+        return match[0][0]
+
+    return ''
+
+
+def extract_recieved_by_label(header):
+    header = re.sub('\n', ' ', header)
+    header = remove_details(header)
+    header = cleanup_text(header)
+
+    if header.startswith('from'):
+        match = re.findall('from\s+(.*?)\s+by\s+(.*?)(\s+|$)', header)
+        if len(match) == 1:
+            return match[0][1]
+    elif header.startswith('by'):
+        match  = re.findall('by\s+(.*?)(\s+|$)', header)
+        if len(match) == 1:
+            return match[0][0]
+    return ''
+
 
 def extract_labels(header):
     """
@@ -77,13 +109,16 @@ def try_to_get_timestring(header):  # TODO: rename this func
         split = header.split('\n')
         timestring = cleanup_text(split[len(split) - 1])
 
-    # remove envelopes if any
-    timestring = cleanup_text(re.sub('([(].*[)])', '', timestring))
+
+    timestring = cleanup_text(remove_details(timestring))
     timestring = strip_timezone_name(timestring)
-    # replace -0000 to +0000
     timestring = re.sub('-0000', '+0000', timestring)
 
     return timestring
+
+
+def remove_details(text):
+    return re.sub('([(].*?[)])', '', text)
 
 
 def strip_timezone_name(timestring):

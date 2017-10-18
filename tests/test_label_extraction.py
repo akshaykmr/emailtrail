@@ -1,4 +1,4 @@
-from emailtrail import extract_from_label, extract_recieved_by_label, remove_details, extract_protocol_used, analyse_hop
+from emailtrail import extract_from_label, extract_recieved_by_label, remove_details, extract_protocol_used
 
 
 def test_from_label_extraciton():
@@ -120,28 +120,3 @@ def test_protocol_extraction():
     for case in cases:
         assert case[1] == extract_protocol_used(case[0])
 
-
-def test_hop_analysis():
-    cases = [
-        [
-            'from mail-vk0-x233.google.com (mail-vk0-x233.google.com. [2607:f8b0:400c:c05::233])\n        by mx.google.com with ESMTPS id d124si110912930vka.142.2016.01.12.10.20.45\n        for <support@peacedojo.com>\n        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);\n        Wed, 16 Dec 2015 16:34:34 -0600',
-            {
-                "from": "mail-vk0-x233.google.com",
-                "receivedBy": "mx.google.com",
-                "protocol": "ESMTPS",
-                "timestamp": 1450263874
-            }
-        ],
-        [
-            'by mailr.blah.com for <sales@hohoho.com>; Fri, 18 Dec 2015 15:37:27 GMT',
-            {
-                'from': '',
-                'receivedBy': 'mailr.blah.com',
-                'protocol': '',
-                'timestamp': 1450433247
-            }
-        ]
-    ]
-
-    for case in cases:
-        assert case[1] == analyse_hop(case[0])

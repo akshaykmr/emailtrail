@@ -7,6 +7,101 @@ import dateparser
 from utils import cleanup_text, decode_and_convert_to_unicode
 
 
+def analyze(raw_headers):
+    """
+    sample output:
+    {
+        'Cc': u'Shivam <shivam@foo.com>',
+        'From': u'Dhruv <dhruv@foo.com>',
+        'To': u'robin@apple.com',
+        'trail': [
+            {
+                'from': '',
+                'protocol': 'HTTP',
+                'receivedBy': '10.31.102.130',
+                'timestamp': 1452574216,
+                'delay': 0
+            },
+            {
+                'from': '',
+                'protocol': 'SMTP',
+                'receivedBy': 'mail-vk0-x22b.google.com',
+                'timestamp': 1452574218,
+                'delay': 2
+            },
+            {
+                'from': 'mail-vk0-x22b.google.com',
+                'protocol': 'ESMTPS',
+                'receivedBy': 'mx.google.com',
+                'timestamp': 1452574218,
+                'delay': 0
+            },
+            {
+                'from': '',
+                'protocol': 'SMTP',
+                'receivedBy': '10.66.77.65',
+                'timestamp': 1452574218,
+                'delay': 0
+            }
+        ]
+    }
+    """
+    if raw_headers is None:
+        return None
+    raw_headers = raw_headers.strip()
+    parser = HeaderParser()
+    headers = parser.parsestr(raw_headers.encode('ascii', 'ignore'))
+    received_headers = headers.get_all('Received')
+
+    trail = generate_trail(received_headers)
+
+    analysis = {
+        'From': decode_and_convert_to_unicode(headers.get('From')),
+        'To': decode_and_convert_to_unicode(headers.get('To')),
+        'Cc': decode_and_convert_to_unicode(headers.get('Cc')),
+        'Bcc': decode_and_convert_to_unicode(headers.get('Bcc')),
+        'trail': trail
+    }
+
+    return analysis
+
+
+def generate_trail(received):
+    """
+    Takes a list of `recieved` headers and
+    creates the email trail (structured information of hops in transit)
+    """
+    if received is None:
+        return None
+
+    received = [cleanup_text(header) for header in received]
+    trail = [analyse_hop(header) for header in received]
+
+    # sort in chronological order
+    trail.reverse()
+    trail = set_delay_information(trail)
+    return trail
+
+
+def analyse_hop(header):
+    """ Parses the details associated with the hop into a structured format """
+    return {
+        "from": extract_from_label(header),
+        "receivedBy": extract_recieved_by_label(header),
+        "protocol": extract_protocol_used(header),
+        "timestamp": get_timestamp(try_to_get_timestring(header))
+    }
+
+
+def set_delay_information(hop_list):
+    """ For each hop sets the calculated `delay` from previous hop | mutates list"""
+    previous_timestamp = None
+    for hop in hop_list:
+        hop['delay'] = calculate_delay(hop['timestamp'], previous_timestamp)
+        previous_timestamp = hop['timestamp']
+    return hop_list
+
+
 def extract_from_label(header):
     """ Get the hostname associated with `from` """
     match = re.findall(
@@ -152,70 +247,3 @@ def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring
         return None
 
     return calculate_delay(current_timestamp, previous_timestamp)
-
-
-def analyse_hop(header):
-    """ Parses the details associated with the hop into a structured format """
-    return {
-        "from": extract_from_label(header),
-        "receivedBy": extract_recieved_by_label(header),
-        "protocol": extract_protocol_used(header),
-        "timestamp": get_timestamp(try_to_get_timestring(header))
-    }
-
-
-def generate_trail(received):
-    """
-    Takes a list of `recieved` headers and
-    creates the email trail (structured information of hops in transit)
-    """
-    if received is None:
-        return None
-
-    trail = [analyse_hop(header) for header in received]
-
-    # sort in chronological order for readability
-    trail.reverse()
-    return trail
-
-
-def analyze(raw_headers):
-    """
-    sample output:
-    {'Cc': u'Shivam <shivam@foo.com>',
-    'From': u'Dhruv <dhruv@foo.com>',
-    'To': u'robin@applce.com',
-    'trail': [{'from': '',
-                'protocol': 'HTTP',
-                'receivedBy': '10.31.102.130',
-                'timestamp': 1452574216},
-            {'from': '',
-                'protocol': 'SMTP',
-                'receivedBy': 'mail-vk0-x22b.google.com',
-                'timestamp': 1452574216},
-            {'from': 'mail-vk0-x22b.google.com',
-                'protocol': 'ESMTPS',
-                'receivedBy': 'mx.google.com',
-                'timestamp': 1452574216},
-            {'from': '',
-                'protocol': 'SMTP',
-                'receivedBy': '10.66.77.65',
-                'timestamp': 1452574216}]}
-    """
-    if raw_headers is None:
-        return None
-
-    parser = HeaderParser()
-    headers = parser.parsestr(raw_headers.encode('ascii', 'ignore'))
-    received_headers = [cleanup_text(header) for header in headers.get_all('Received')]
-
-    trail = generate_trail(received_headers)
-
-    analysis = {
-        'From': decode_and_convert_to_unicode(headers.get('From')),
-        'To': decode_and_convert_to_unicode(headers.get('To')),
-        'Cc': decode_and_convert_to_unicode(headers.get('Cc')),
-        'trail': trail
-    }
-
-    return analysis

@@ -7,6 +7,7 @@ import dateparser
 from utils import cleanup_text, decode_and_convert_to_unicode
 
 def extract_from_label(header):
+    """ Get the hostname associated with `from` """
     match = re.findall(
       """
       from\s+
@@ -17,6 +18,7 @@ def extract_from_label(header):
     return match[0] if match else ''
 
 def extract_recieved_by_label(header):
+    """ Get the hostname associated with `by` """
     header = re.sub('\n', ' ', header)
     header = remove_details(header)
     header = cleanup_text(header)
@@ -30,6 +32,7 @@ def extract_recieved_by_label(header):
     return ''
 
 def extract_protocol_used(header):
+    """ Get the protocol used. eg. SMTP, HTTP etc. """
     header = re.sub('\n', ' ', header)
     header = remove_details(header)
     header = cleanup_text(header)
@@ -63,57 +66,6 @@ def extract_protocol_used(header):
 
     return cleanup_text(protocol)
 
-def extract_labels(header):
-    """
-    Gives structured info of mail servers involved and the protocol used
-    given a 'Received' header
-
-    {
-        'from': '186.250.116.162',       # the name the sending computer gave for itself
-        'receivedBy': 'mx.google.com',   # the receiving computer's name
-        'protocol': 'ESMTP',
-        'timestamp': unix_epoch
-    }
-    """
-    split = cleanup_text(header.split(';')[0])
-
-    # TODO: These regex have room for improvement
-    if split.startswith('from'):
-        labels = re.findall(
-            """
-            from\s+
-            (.*?)\s+
-            by(.*?)
-            (?:
-                (?:with|via)
-                (.*?)
-                (?:id|$)
-                |id|$
-            )""", split, re.DOTALL | re.X)
-    else:
-        labels = re.findall(
-            """
-            ()by
-            (.*?)
-            (?:
-                (?:with|via)
-                (.*?)
-                (?:id|$)
-                |id
-            )""", split, re.DOTALL | re.X)
-
-    labels = map(
-        lambda x: x.replace('\n', ' '),
-        map(cleanup_text, labels[0])
-    )
-    return ({
-        'from': labels[0],
-        'receivedBy': labels[1],
-        'protocol': labels[2],
-        'timestamp': get_timestamp(try_to_get_timestring(header))
-    })
-
-
 def try_to_get_timestring(header):  # TODO: rename this func
     """
     Tries to extract a timestring from a header
@@ -142,7 +94,7 @@ def try_to_get_timestring(header):  # TODO: rename this func
 
 
 def remove_details(text):
-    return re.sub('([(].*?[)])', '', text)
+    return re.sub('([(].*?[)])', ' ', text)
 
 
 def strip_timezone_name(timestring):
@@ -167,8 +119,7 @@ def get_timestamp(timestring):
             return None
         else:
             timestamp = time.mktime(date.timetuple())
-
-    return int(timestamp)
+            return int(timestamp)
 
 
 def calculate_delay(current_timestamp, previous_timestamp):
@@ -187,7 +138,6 @@ def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring
     Returns calculated delay (in seconds)  between two subsequent 'Received' headers
     Returns None if not determinable
     """
-
     current_timestamp = timestamp_parser(timestring_parser(current))
     previous_timestamp = timestamp_parser(timestring_parser(previous))
 
@@ -198,6 +148,16 @@ def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring
     return calculate_delay(current_timestamp, previous_timestamp)
 
 
+def analyse_hop(header):
+    """ Parses the details associated with the hop into a structured format """
+    return {
+        "from": extract_from_label(header),
+        "receivedBy": extract_recieved_by_label(header),
+        "protocol": extract_protocol_used(header),
+        "timestamp": get_timestamp(try_to_get_timestring(header))
+    }
+
+
 def generate_trail(received):
     """
     Takes a list of `recieved` headers and
@@ -206,134 +166,50 @@ def generate_trail(received):
     if received is None:
         return None
 
-    trail = []
-
-    for i in xrange(len(received)):
-        current = received[i]
-        try:
-            previous = received[i + 1]
-        except IndexError:
-            previous = None
-
-        hop = {
-            'delay': 0,
-            'label_error': None,
-            'delay_error': None
-        }
-
-        try:
-            hop.update(extract_labels(current))
-        except IndexError:  # FIXME
-            hop['label_error'] = current
-
-        if previous is not None:
-            delay = get_path_delay(current, previous)
-            if delay is None:
-                hop['delay_error'] = {
-                    'current': current,
-                    'previous': previous
-                }
-            else:
-                hop['delay'] = delay
-
-        trail.append(hop)
+    trail = [analyse_hop(header) for header in received]
 
     # sort in chronological order for readability
     trail.reverse()
     return trail
 
 
-def generate_stats(trail):
-    """ sums delay and errors """
-    if trail is None:
-        return None
-
-    stats = {
-        'total_delay': 0,
-        'delay_error_count': 0,
-        'label_error_count': 0
-    }
-
-    for hop in trail:
-        stats['total_delay'] += hop['delay']
-
-        if hop['delay_error']:
-            stats['delay_error_count'] += 1
-        if hop['label_error']:
-            stats['label_error_count'] += 1
-
-    return stats
-
-
 def analyze(raw_headers):
     """
     sample output:
-    {
-        'From': 'Josh <foo.josh@gmail.com>',
-        'To': 'gossip+chat@kungfu.com',
-        'Cc': None,
-        'delay_error_count': 0,
-        'label_error_count': 0,
-        'total_delay': 2,
-        'trail': [
-            {
-                'delay': 0,
-                'delay_error': None,
-                'from': '[127.0.0.1] (localhost [52.2.54.97])',
-                'label_error': None,
-                'protocol': '',
-                'receivedBy': 'ismtpd0002p1iad1.sendgr',
-                'timestamp': 1451525244
-            },
-            {
-                'delay': 0,
-                'delay_error': None,
-                'from': '',
-                'label_error': None,
-                'protocol': '',
-                'receivedBy': 'filter0441p1mdw1.sendgr',
-                'timestamp': 1451525244
-            },
-            {
-                'delay': 0,
-                'delay_error': None,
-                'from': 'o1.email.kungfu.com (o1.email.kungfu.com. [192.254.121.229])',
-                'label_error': None,
+    {'Cc': u'Shivam <shivam@foo.com>',
+    'From': u'Dhruv <dhruv@foo.com>',
+    'To': u'robin@applce.com',
+    'trail': [{'from': '',
+                'protocol': 'HTTP',
+                'receivedBy': '10.31.102.130',
+                'timestamp': 1452574216},
+            {'from': '',
+                'protocol': 'SMTP',
+                'receivedBy': 'mail-vk0-x22b.google.com',
+                'timestamp': 1452574216},
+            {'from': 'mail-vk0-x22b.google.com',
                 'protocol': 'ESMTPS',
                 'receivedBy': 'mx.google.com',
-                'timestamp': 1451525246
-            },
-            {
-                'delay': 0,
-                'delay_error': None,
-                'from': '',
-                'label_error': None,
+                'timestamp': 1452574216},
+            {'from': '',
                 'protocol': 'SMTP',
-                'receivedBy': '10.66.248.3',
-                'timestamp': 1451525246
-            }
-        ]
-    }
+                'receivedBy': '10.66.77.65',
+                'timestamp': 1452574216}]}
     """
     if raw_headers is None:
         return None
 
-    # parse the headers
     parser = HeaderParser()
     headers = parser.parsestr(raw_headers.encode('ascii', 'ignore'))
+    received_headers = [cleanup_text(header) for header in headers.get_all('Received')]
 
-    # extract all 'Received' headers
-    received = headers.get_all('Received')
-
-    trail = generate_trail(received)
-    stats = generate_stats(trail)
+    trail = generate_trail(received_headers)
 
     analysis = {
         'From': decode_and_convert_to_unicode(headers.get('From')),
         'To': decode_and_convert_to_unicode(headers.get('To')),
         'Cc': decode_and_convert_to_unicode(headers.get('Cc')),
-        'trail': trail,
-        'stats': stats
+        'trail': trail
     }
 
     return analysis

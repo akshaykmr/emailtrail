@@ -1,4 +1,4 @@
-from emailtrail import extract_from_label, extract_recieved_by_label, remove_details, extract_protocol_used
+from emailtrail import extract_from_label, extract_recieved_by_label, remove_details, extract_protocol_used, analyse_hop
 
 def test_from_label_extraciton():
     cases = [
@@ -14,6 +14,10 @@ def test_from_label_extraciton():
         [
             "from blah",
             "blah"
+        ],
+        [
+            "from [127.0.0.1] (localhost [52.2.54.97])\\n\\tby ismtpd0002p1iad1.sendgrid.net (SG) with ESMTP id p3iTfjpIQMuPA35Cjv4UrQ\\n\\tfor <support+chat@pandakungfu.com>; Wed, 16 Dec 2015 22:19:22.596 +0000 (UTC)",
+            "[127.0.0.1]"
         ]
     ]
 
@@ -26,7 +30,7 @@ def test_detail_removal():
     cases = [
         [
             'from mail-vk0-x233.google.com (mail-vk0-x233.google.com. [2607:f8b0:400c:c05::233])\n',
-            'from mail-vk0-x233.google.com \n'
+            'from mail-vk0-x233.google.com  \n'
         ]
     ]
 
@@ -55,7 +59,7 @@ def test_recieved_by_label_extraction():
             "mx.google.com"
         ],
         [
-            'from [127.0.0.1] (localhost [52.2.54.97])\n\tby ismtpd0002p1iad1.sendgrid.net (SG) with ESMTP id GiHVpachST-HTO7pZjZZgw\n\tfor <support+chat@buddy.com>; Tue, 12 Jan 2016 18:20:00.301 +0000 (UTC)',
+            'from [127.0.0.1] (localhost [52.2.54.97])\\n\\tby ismtpd0002p1iad1.sendgrid.net (SG) with ESMTP id GiHVpachST-HTO7pZjZZgw\n\tfor <support+chat@buddy.com>; Tue, 12 Jan 2016 18:20:00.301 +0000 (UTC)',
             'ismtpd0002p1iad1.sendgrid.net'
         ],
         [
@@ -66,6 +70,10 @@ def test_recieved_by_label_extraction():
             for <support+r.rv9cu.1647381@apple.com>; Tue, 12 Jan 2016 15:40:43 +0000 (GMT)
             """,
             'mail.yolo.com'
+        ],
+        [
+            'from [127.0.0.1] (localhost [52.2.54.97])\\n\\tby ismtpd0002p1iad1.sendgrid.net (SG) with ESMTP id p3iTfjpIQMuPA35Cjv4UrQ\\n\\tfor <support+chat@pandakungfu.com>; Wed, 16 Dec 2015 22:19:22.596 +0000 (UTC)',
+            'ismtpd0002p1iad1.sendgrid.net'
         ]
     ]
 
@@ -103,6 +111,10 @@ def test_protocol_extraction():
         [
             'from BLU179-W55 ([65.55.111.73]) by BLU004-OMC2S38.hotmail.com over TLS secured channel with Microsoft SMTPSVC(7.5.7601.23008);\n\t Tue, 12 Jan 2016 09:44:09 -0800',
             'Microsoft SMTPSVC'
+        ],
+        [
+            'from [127.0.0.1] (localhost [52.2.54.97])\n\tby ismtpd0002p1iad1.sendgrid.net (SG) with ESMTP id p3iTfjpIQMuPA35Cjv4UrQ\\n\\tfor <support+chat@pandakungfu.com>; Wed, 16 Dec 2015 22:19:22.596 +0000 (UTC)',
+            'ESMTP'
         ]
     ]
 
@@ -110,3 +122,31 @@ def test_protocol_extraction():
 
     for case in cases:
         assert case[1] == extract_protocol_used(case[0])
+
+
+def test_hop_analysis():
+    cases = [
+        [
+            'from mail-vk0-x233.google.com (mail-vk0-x233.google.com. [2607:f8b0:400c:c05::233])\n        by mx.google.com with ESMTPS id d124si110912930vka.142.2016.01.12.10.20.45\n        for <support@peacedojo.com>\n        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);\n        Wed, 16 Dec 2015 16:34:34 -0600',
+            {
+                "from": "mail-vk0-x233.google.com",
+                "receivedBy": "mx.google.com",
+                "protocol": "ESMTPS",
+                "timestamp": 1450263874
+            }
+        ],
+        [
+            'by mailr.blah.com for <sales@hohoho.com>; Fri, 18 Dec 2015 15:37:27 GMT',
+            {
+                'from': '',
+                'receivedBy': 'mailr.blah.com',
+                'protocol': '',
+                'timestamp': 1450433247
+            }
+        ]
+    ]
+
+    for case in cases:
+        assert case[1] == analyse_hop(case[0])
+
+  

@@ -8,13 +8,19 @@ def python_version_greater_than_three():
 
 def cleanup_text(text):
     """
-    normalizes newline chars, strips whitespace, removes newline chars from the ends.
+    normalizes newline/tab chars, strips whitespace, removes newline chars from the ends.
     """
-    return normalize_newlinechar(text).strip().strip('\n').strip()
+    text = normalize_newlinechar(text)
+    text = normalize_tabchar(text)
+    return text.strip()
 
 
 def normalize_newlinechar(text):
     return text.replace("\\n", "\n")
+
+
+def normalize_tabchar(text):
+    return text.replace("\\t", "\t")
 
 
 def decode_and_convert_to_unicode(text):

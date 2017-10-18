@@ -7,21 +7,14 @@ import dateparser
 from utils import cleanup_text, decode_and_convert_to_unicode
 
 def extract_from_label(header):
-    if header.startswith('by'):
-        return ''
-
     match = re.findall(
       """
       from\s+
       (.*?)
-      ((\s+)|$)
+      (?:\s+|$)
       """, header, re.DOTALL | re.X)
 
-    if len(match) == 1:
-        return match[0][0]
-
-    return ''
-
+    return match[0] if match else ''
 
 def extract_recieved_by_label(header):
     header = re.sub('\n', ' ', header)
@@ -29,15 +22,46 @@ def extract_recieved_by_label(header):
     header = cleanup_text(header)
 
     if header.startswith('from'):
-        match = re.findall('from\s+(.*?)\s+by\s+(.*?)(\s+|$)', header)
-        if len(match) == 1:
-            return match[0][1]
+        match = re.findall('from\s+(?:.*?)\s+by\s+(.*?)(?:\s+|$)', header)
+        return match[0] if match else ''
     elif header.startswith('by'):
-        match  = re.findall('by\s+(.*?)(\s+|$)', header)
-        if len(match) == 1:
-            return match[0][0]
+        match  = re.findall('by\s+(.*?)(?:\s+|$)', header)
+        return match[0] if match else ''
     return ''
 
+def extract_protocol_used(header):
+    header = re.sub('\n', ' ', header)
+    header = remove_details(header)
+    header = cleanup_text(header)
+
+    protocol = ''
+
+    if header.startswith('from'):
+        match = re.findall(
+            """
+            from\s+(?:.*?)\s+by\s+(?:.*?)\s+
+            (?:
+                (?:with|via)
+                (.*?)
+                (?:id|$|;)
+                |id|$
+            )
+            """, header, re.DOTALL | re.X)
+        protocol = match[0] if match else ''
+    if header.startswith('by'):
+        match = re.findall(
+            """
+            by\s+(?:.*?)\s+
+            (?:
+                (?:with|via)
+                (.*?)
+                (?:id|$|;)
+                |id|$
+            )
+            """, header, re.DOTALL | re.X)
+        protocol = match[0] if match else ''
+
+    return cleanup_text(protocol)
 
 def extract_labels(header):
     """

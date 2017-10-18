@@ -2,6 +2,9 @@
 **/*.pyc
 **/.cache
 **/__pycache__
+*.egg-info
+dist
+build
 
 delay_error.txt
 label_error.txt

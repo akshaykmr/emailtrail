@@ -8,6 +8,7 @@ name = "pypi"
 pytest = "*"
 xmltodict = "*"
 "flake8" = "*"
+pypandoc = "*"
 
 
 [packages]

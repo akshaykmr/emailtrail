@@ -89,8 +89,12 @@ def analyse_hop(header):
         "from": extract_from_label(header),
         "receivedBy": extract_recieved_by_label(header),
         "protocol": extract_protocol_used(header),
-        "timestamp": get_timestamp(try_to_get_timestring(header))
+        "timestamp": extract_timestamp(header)
     }
+
+
+def extract_timestamp(header):
+    return get_timestamp(try_to_get_timestring(header))
 
 
 def set_delay_information(hop_list):

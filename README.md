@@ -18,6 +18,7 @@ Analyse hops taken by an Email to reach you. Get structured information about ea
 - [Usage](#usage)
 - [Caveats](#caveats)
 - [Contributing](#contributing)
+- [Miscellaneous](#miscellaneous)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -102,12 +103,14 @@ An empty string value is set for fields which couldn't be determined.
 - `delay`: The delay (in seconds) is computed by taking the difference of two consecutive hops. In above example there was
 a delay of `1 sec ` from `10.103.79.86` to `mx.google.com`
 
+
+
 ### Caveats
 
 - Sometimes during delay calculation the timestamp difference may be negative. 
 It's not possible for a server to recieve the email before previous one,
 It means that either one or both of the servers clocks are off.
-We assume a delay of 0 in this case
+We assume a delay of `0` for this hop.
 
 ## Contributing
 emailtrail uses [pipenv](http://pipenv.org/) for managing virtual env and package versions.
@@ -115,5 +118,17 @@ emailtrail uses [pipenv](http://pipenv.org/) for managing virtual env and packag
 - In project root: `pipenv install --dev`. This installs packages required for testing and linting
 - Jump into your virutal env: `pipenv shell`
 - Running tests: `pytest`
+- If you want to understand the code, read the test cases first.
 - Make your changes -> Pass the tests -> Push to your branch -> Create pull request -> Profit ??
+
+
+#### Miscellaneous
+
+In the middle of developing this module, I switched to TDD. Albeit slow for a first timer initially, It proved to be a very effective approach later on.
+- Forces you to think how to structure your code.
+- Less coupling, small functions with minimal to none side effects, well defined interfaces.
+- Confidence in refactoring code quickly. (Everyone loves it when their investments pay off)
+
+
+
 

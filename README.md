@@ -52,7 +52,7 @@ A business opportunity awaits
 """
 ```
 
-Lets analyse it - 
+#### Lets analyse it
 
 ```python
 import emailtrail
@@ -102,6 +102,35 @@ The trail shows the email hops sorted in chronological order. Each intermediary 
 An empty string value is set for fields which couldn't be determined.
 - `delay`: The delay (in seconds) is computed by taking the difference of two consecutive hops. In above example there was
 a delay of `1 sec ` from `10.103.79.86` to `mx.google.com`
+
+#### Analysing a single `Recieved` header
+
+```python
+>>> header = """from mail-vk0-x233.google.com (mail-vk0-x233.google.com. [2607:f8b0:400c:c05::233])\n        by mx.google.com with ESMTPS id d124si110912930vka.142.2016.01.12.10.20.45\n        for <support@peacedojo.com>\n        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);\n        Wed, 16 Dec 2015 16:34:34 -0600 """
+
+>>> from emailtrail import analyse_hop, extract_protocol_used, extract_from_label, extract_recieved_by_label, extract_timestamp
+
+>>> extract_protocol_used(header)
+"ESMTPS"
+
+>>> extract_from_label(header)
+"mail-vk0-x233.google.com"
+
+>>> extract_recieved_by_label(header)
+"mx.google.com"
+
+>>> extract_timestamp(header)
+1450263874
+
+>>> analyse_hop(header)
+{
+    "from": "mail-vk0-x233.google.com",
+    "receivedBy": "mx.google.com",
+    "protocol": "ESMTPS",
+    "timestamp": 1450263874
+}
+
+```
 
 
 

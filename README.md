@@ -61,35 +61,34 @@ emailtrail.analyse(email)
 
 ```python
 {
-    'To': u'money@capitalism.com;',
-    'From': u'Mr. Money Bags <bags@moneyrules.com>',
-    'Bcc': u'satan@wallstreet.com',
-    'Cc': u'None',    
-    'trail': [
-        {
-            'delay': 0,
-            'from': '',
-            'protocol': 'HTTP',
-            'receivedBy': '10.103.79.86',
-            'timestamp': 1507578421
-        },
-        {
-            'delay': 1,
-            'from': 'mail-sor-f65.google.com',
-            'protocol': 'SMTPS',
-            'receivedBy': 'mx.google.com',
-            'timestamp': 1507578422
-        },
-        {
-            'delay': 0,
-            'from': '',
-            'protocol': 'SMTP',
-            'receivedBy': '10.129.52.209',
-            'timestamp': 1507578422
-        }
-    ]
+  'To': u'money@capitalism.com;',
+  'From': u'Mr. Money Bags <bags@moneyrules.com>',
+  'Bcc': u'satan@wallstreet.com',
+  'Cc': u'None',
+  'trail': [
+    {
+      'delay': 0,
+      'from': '',
+      'protocol': 'HTTP',
+      'receivedBy': '10.103.79.86',
+      'timestamp': 1507623421
+    },
+    {
+      'delay': 1,
+      'from': 'mail-sor-f65.google.com',
+      'protocol': 'SMTPS',
+      'receivedBy': 'mx.google.com',
+      'timestamp': 1507623422
+    },
+    {
+      'delay': 0,
+      'from': '',
+      'protocol': 'SMTP',
+      'receivedBy': '10.129.52.209',
+      'timestamp': 1507623422
+    }
+  ]
 }
-
 ```
 The analyse function returns a python dictionary.
 The trail shows the email hops sorted in chronological order. Each intermediary email server adds a `Received` header to the mail, from which the module parses the following information:
@@ -120,14 +119,14 @@ a delay of `1 sec ` from `10.103.79.86` to `mx.google.com`
 "mx.google.com"
 
 >>> extract_timestamp(header)
-1450263874
+1450305274
 
 >>> analyse_hop(header)
 {
     "from": "mail-vk0-x233.google.com",
     "receivedBy": "mx.google.com",
     "protocol": "ESMTPS",
-    "timestamp": 1450263874
+    "timestamp": 1450305274
 }
 
 ```

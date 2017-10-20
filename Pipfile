@@ -13,3 +13,4 @@ pypandoc = "*"
 
 [packages]
 dateparser = "*"
+pytz = "*"

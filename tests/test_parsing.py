@@ -55,6 +55,6 @@ class TestTimestampParsing():
         assert None is get_timestamp('time is 12:30 pm, blah')
 
     def test_unix_timestamp_for_valid_timestring(self):
-        assert 1450263874 == get_timestamp('Wed, 16 Dec 2015 16:34:34 -0600')
-        assert 1450284562 == get_timestamp('Wed, 16 Dec 2015 22:19:22.596 +0000')
-        assert 1450433247 == get_timestamp('Fri, 18 Dec 2015 15:37:27 GMT')
+        assert 1450305274 == get_timestamp('Wed, 16 Dec 2015 16:34:34 -0600')
+        assert 1450304362 == get_timestamp('Wed, 16 Dec 2015 22:19:22.596 +0000')
+        assert 1450453047 == get_timestamp('Fri, 18 Dec 2015 15:37:27 GMT')

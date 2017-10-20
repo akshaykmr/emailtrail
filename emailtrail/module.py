@@ -1,8 +1,9 @@
 from email.parser import HeaderParser
 import re
-import time
 import string
+import calendar
 import dateparser
+import pytz
 
 from utils import cleanup_text, decode_and_convert_to_unicode
 
@@ -11,9 +12,9 @@ def analyse(raw_headers):
     """
     sample output:
     {
-        'Cc': u'Shivam <shivam@foo.com>',
-        'From': u'Dhruv <dhruv@foo.com>',
         'To': u'robin@apple.com',
+        'From': u'Dhruv <dhruv@foo.com>',
+        'Cc': u'Shivam <shivam@foo.com>',
         'trail': [
             {
                 'from': '',
@@ -215,13 +216,13 @@ def get_timestamp(timestring):
 
     if timestring is None:
         return None
-    else:
-        date = dateparser.parse(timestring)
-        if date is None:
-            return None
-        else:
-            timestamp = time.mktime(date.timetuple())
-            return int(timestamp)
+
+    date = dateparser.parse(timestring)
+    if date is None:
+        return None
+
+    date = date.astimezone(pytz.utc)
+    return calendar.timegm(date.utctimetuple())
 
 
 def calculate_delay(current_timestamp, previous_timestamp):

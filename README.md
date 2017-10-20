@@ -3,6 +3,7 @@
 <!-- <img alt="logo" title="logo" src="http://i.imgur.com/VShxJHs.png" width="450"> -->
 </p>
 
+![Build Status](https://img.shields.io/travis/akshayKMR/emailtrail.svg?style=flat-square)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 <p>

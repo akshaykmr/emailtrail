@@ -15,6 +15,8 @@ def analyse(raw_headers):
         'To': u'robin@apple.com',
         'From': u'Dhruv <dhruv@foo.com>',
         'Cc': u'Shivam <shivam@foo.com>',
+        'Bcc': u'Abhishek <quirk@foo.com>',
+        'total_delay': 2,
         'trail': [
             {
                 'from': '',

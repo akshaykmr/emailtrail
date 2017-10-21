@@ -56,12 +56,15 @@ def analyse(raw_headers):
 
     trail = generate_trail(received_headers)
 
+    total_delay = sum([hop['delay'] for hop in trail])
+
     analysis = {
         'From': decode_and_convert_to_unicode(headers.get('From')),
         'To': decode_and_convert_to_unicode(headers.get('To')),
         'Cc': decode_and_convert_to_unicode(headers.get('Cc')),
         'Bcc': decode_and_convert_to_unicode(headers.get('Bcc')),
-        'trail': trail
+        'trail': trail,
+        'total_delay': total_delay
     }
 
     return analysis

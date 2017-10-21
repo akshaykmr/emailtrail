@@ -56,15 +56,13 @@ def analyse(raw_headers):
 
     trail = generate_trail(received_headers)
 
-    total_delay = sum([hop['delay'] for hop in trail])
-
     analysis = {
         'From': decode_and_convert_to_unicode(headers.get('From')),
         'To': decode_and_convert_to_unicode(headers.get('To')),
         'Cc': decode_and_convert_to_unicode(headers.get('Cc')),
         'Bcc': decode_and_convert_to_unicode(headers.get('Bcc')),
         'trail': trail,
-        'total_delay': total_delay
+        'total_delay': sum([hop['delay'] for hop in trail])
     }
 
     return analysis
@@ -91,7 +89,7 @@ def analyse_hop(header):
     """ Parses the details associated with the hop into a structured format """
     return {
         "from": extract_from_label(header),
-        "receivedBy": extract_recieved_by_label(header),
+        "receivedBy": extract_received_by_label(header),
         "protocol": extract_protocol_used(header),
         "timestamp": extract_timestamp(header)
     }
@@ -122,7 +120,7 @@ def extract_from_label(header):
     return match[0] if match else ''
 
 
-def extract_recieved_by_label(header):
+def extract_received_by_label(header):
     """ Get the hostname associated with `by` """
     header = re.sub('\n', ' ', header)
     header = remove_details(header)

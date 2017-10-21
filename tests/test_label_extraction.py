@@ -1,4 +1,4 @@
-from emailtrail import extract_from_label, extract_recieved_by_label, remove_details, extract_protocol_used
+from emailtrail import extract_from_label, extract_received_by_label, remove_details, extract_protocol_used
 
 
 def test_from_label_extraciton():
@@ -77,7 +77,7 @@ def test_recieved_by_label_extraction():
     ]
 
     for case in cases:
-        assert case[1] == extract_recieved_by_label(case[0])
+        assert case[1] == extract_received_by_label(case[0])
 
 
 def test_protocol_extraction():

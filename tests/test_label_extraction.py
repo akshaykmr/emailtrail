@@ -119,4 +119,3 @@ def test_protocol_extraction():
 
     for case in cases:
         assert case[1] == extract_protocol_used(case[0])
-

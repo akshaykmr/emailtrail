@@ -15,6 +15,8 @@ def analyse(raw_headers):
         'To': u'robin@apple.com',
         'From': u'Dhruv <dhruv@foo.com>',
         'Cc': u'Shivam <shivam@foo.com>',
+        'Bcc': u'Abhishek <quirk@foo.com>',
+        'total_delay': 2,
         'trail': [
             {
                 'from': '',
@@ -61,7 +63,8 @@ def analyse(raw_headers):
         'To': decode_and_convert_to_unicode(headers.get('To')),
         'Cc': decode_and_convert_to_unicode(headers.get('Cc')),
         'Bcc': decode_and_convert_to_unicode(headers.get('Bcc')),
-        'trail': trail
+        'trail': trail,
+        'total_delay': sum([hop['delay'] for hop in trail])
     }
 
     return analysis
@@ -69,7 +72,7 @@ def analyse(raw_headers):
 
 def generate_trail(received):
     """
-    Takes a list of `recieved` headers and
+    Takes a list of `received` headers and
     creates the email trail (structured information of hops in transit)
     """
     if received is None:
@@ -88,7 +91,7 @@ def analyse_hop(header):
     """ Parses the details associated with the hop into a structured format """
     return {
         "from": extract_from_label(header),
-        "receivedBy": extract_recieved_by_label(header),
+        "receivedBy": extract_received_by_label(header),
         "protocol": extract_protocol_used(header),
         "timestamp": extract_timestamp(header)
     }
@@ -119,7 +122,7 @@ def extract_from_label(header):
     return match[0] if match else ''
 
 
-def extract_recieved_by_label(header):
+def extract_received_by_label(header):
     """ Get the hostname associated with `by` """
     header = re.sub('\n', ' ', header)
     header = remove_details(header)
@@ -135,7 +138,7 @@ def extract_recieved_by_label(header):
 
 
 def extract_protocol_used(header):
-    """ Get the protocol used. eg. SMTP, HTTP etc. """
+    """ Get the protocol used. e.g. SMTP, HTTP etc. """
     header = re.sub('\n', ' ', header)
     header = remove_details(header)
     header = cleanup_text(header)
@@ -226,13 +229,13 @@ def get_timestamp(timestring):
 
 
 def calculate_delay(current_timestamp, previous_timestamp):
-    """ Returns delay for two unixtimestamps """
+    """ Returns delay for two unix timestamps """
     if current_timestamp is None or previous_timestamp is None:
         return 0
 
     delay = current_timestamp - previous_timestamp
     if delay < 0:
-        # It's not possible for the current server to recieve the email before previous one
+        # It's not possible for the current server to receive the email before previous one
         # It means that either one or both of the servers clocks are off.
         # We assume a delay of 0 in this case
         delay = 0

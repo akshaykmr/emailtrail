@@ -106,6 +106,7 @@ A business opportunity awaits
         'Cc': u'None',
         'From': u'Mr. Money Bags <bags@moneyrules.com>',
         'To': u'money@capitalism.com;',
+        'total_delay': 1,
         'trail': [
             {
                 'delay': 0,

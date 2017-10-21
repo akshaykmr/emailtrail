@@ -72,7 +72,7 @@ def analyse(raw_headers):
 
 def generate_trail(received):
     """
-    Takes a list of `recieved` headers and
+    Takes a list of `received` headers and
     creates the email trail (structured information of hops in transit)
     """
     if received is None:
@@ -138,7 +138,7 @@ def extract_recieved_by_label(header):
 
 
 def extract_protocol_used(header):
-    """ Get the protocol used. eg. SMTP, HTTP etc. """
+    """ Get the protocol used. e.g. SMTP, HTTP etc. """
     header = re.sub('\n', ' ', header)
     header = remove_details(header)
     header = cleanup_text(header)
@@ -229,13 +229,13 @@ def get_timestamp(timestring):
 
 
 def calculate_delay(current_timestamp, previous_timestamp):
-    """ Returns delay for two unixtimestamps """
+    """ Returns delay for two unix timestamps """
     if current_timestamp is None or previous_timestamp is None:
         return 0
 
     delay = current_timestamp - previous_timestamp
     if delay < 0:
-        # It's not possible for the current server to recieve the email before previous one
+        # It's not possible for the current server to receive the email before previous one
         # It means that either one or both of the servers clocks are off.
         # We assume a delay of 0 in this case
         delay = 0

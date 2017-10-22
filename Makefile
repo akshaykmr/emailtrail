@@ -7,7 +7,7 @@ help:
 
 
 setup:
-	pip install pipenv
+	pip install tox
 
 activate:
 	pipenv shell

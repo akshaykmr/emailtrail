@@ -98,7 +98,7 @@ def analyse_hop(header):
 
 
 def extract_timestamp(header):
-    return get_timestamp(try_to_get_timestring(header))
+    return get_timestamp(extract_timestring(header))
 
 
 def set_delay_information(hop_list):
@@ -173,7 +173,7 @@ def extract_protocol_used(header):
     return cleanup_text(protocol)
 
 
-def try_to_get_timestring(header):  # TODO: rename this func
+def extract_timestring(header):
     """
     Tries to extract a timestring from a header
     Returns None or a String that *could* be a valid timestring
@@ -242,7 +242,7 @@ def calculate_delay(current_timestamp, previous_timestamp):
     return delay
 
 
-def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring_parser=try_to_get_timestring):
+def get_path_delay(current, previous, timestamp_parser=get_timestamp, timestring_parser=extract_timestring):
     """
     Returns calculated delay (in seconds)  between two subsequent 'Received' headers
     Returns None if not determinable

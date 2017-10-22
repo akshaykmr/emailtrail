@@ -1,6 +1,6 @@
 import pytest
 
-from emailtrail import try_to_get_timestring, strip_timezone_name, get_timestamp
+from emailtrail import extract_timestring, strip_timezone_name, get_timestamp
 
 
 class TestTimestringParsing():
@@ -8,7 +8,7 @@ class TestTimestringParsing():
         invalid_args = [[], {}, None]
         for arg in invalid_args:
             with pytest.raises(TypeError):
-                try_to_get_timestring(arg)
+                extract_timestring(arg)
 
     def test_stripping_extra_timezone_name(self):
         cases = [
@@ -43,7 +43,7 @@ class TestTimestringParsing():
         ]
 
         for case in cases:
-            assert case[1] == try_to_get_timestring(case[0])
+            assert case[1] == extract_timestring(case[0])
 
 
 class TestTimestampParsing():

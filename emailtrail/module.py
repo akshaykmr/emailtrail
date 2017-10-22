@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from email.parser import HeaderParser
 import re
 import string
@@ -5,7 +6,7 @@ import calendar
 import dateparser
 import pytz
 
-from utils import cleanup_text, decode_and_convert_to_unicode
+from .utils import cleanup_text, decode_and_convert_to_unicode
 
 
 def analyse(raw_headers):

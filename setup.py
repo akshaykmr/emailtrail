@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 from setuptools import setup
 
@@ -6,7 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 try:
     from pypandoc import convert
     read_md = lambda f: convert(f, 'rst', 'md')
-except ImportError, RuntimeError:
+except ImportError as RuntimeError:
     # Just reads README.md without the conversion
     # Why? to not force others to install pypandoc when they wanna just build the module,
     # and not upload to PyPi.

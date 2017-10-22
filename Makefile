@@ -7,11 +7,10 @@ help:
 
 
 setup:
-	pip install pipenv
-	pipenv install --dev
+	pip install tox
 
 activate:
 	pipenv shell
 
 test:
-	pipenv run pytest
+	tox

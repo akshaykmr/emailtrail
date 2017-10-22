@@ -1,7 +1,8 @@
+from builtins import object
 from emailtrail import calculate_delay, get_path_delay
 
 
-class TestDelayCalculation():
+class TestDelayCalculation(object):
     def test_usual_cases(self):
         assert 1 == calculate_delay(1450263874, 1450263873)
         assert 0 == calculate_delay(1450263874, 1450263874)

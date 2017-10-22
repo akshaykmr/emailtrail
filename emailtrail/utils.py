@@ -1,3 +1,4 @@
+from builtins import str
 import sys
 from email.header import decode_header, make_header
 
@@ -24,12 +25,14 @@ def normalize_tabchar(text):
 
 
 def decode_and_convert_to_unicode(text):
+    header = None;
     try:
         header = make_header(decode_header(text))
-        if python_version_greater_than_three():
-            return str(header)
-        else:
-            return unicode(header)
     except Exception:
         # Illegal encoding sequence used in the email header, return as is
-        return text
+        header=text;
+
+    if python_version_greater_than_three():
+        return str(header)
+    else:
+        return unicode(header)

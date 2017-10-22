@@ -11,6 +11,7 @@ you will need to make some adjustments to iterate over email headers as per your
 run (from project root):
 $ python -m analyse_dataset.run > out.txt
 """
+from __future__ import print_function
 import os
 from pprint import pprint
 import xmltodict
@@ -34,7 +35,7 @@ if __name__ == '__main__':
 
         if analysis is not None and analysis['trail'] is not None:
             pprint(analysis)
-            print '\n\n----------------------------------------\n\n'
+            print('\n\n----------------------------------------\n\n')
         else:
             total_parse_error += 1
 

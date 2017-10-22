@@ -10,7 +10,7 @@ xmltodict = "*"
 "flake8" = "*"
 pypandoc = "*"
 
-
 [packages]
+future = "*"
 dateparser = "*"
 pytz = "*"

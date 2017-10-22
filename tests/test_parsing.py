@@ -1,9 +1,10 @@
+from builtins import object
 import pytest
 
 from emailtrail import extract_timestring, strip_timezone_name, get_timestamp
 
 
-class TestTimestringParsing():
+class TestTimestringParsing(object):
     def test_exception_if_input_is_not_string(self):
         invalid_args = [[], {}, None]
         for arg in invalid_args:
@@ -46,7 +47,7 @@ class TestTimestringParsing():
             assert case[1] == extract_timestring(case[0])
 
 
-class TestTimestampParsing():
+class TestTimestampParsing(object):
     def test_none_input(self):
         # should return none if the input was none
         assert None is get_timestamp(None)

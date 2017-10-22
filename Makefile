@@ -8,10 +8,9 @@ help:
 
 setup:
 	pip install pipenv
-	pipenv install --dev
 
 activate:
 	pipenv shell
 
 test:
-	pipenv run pytest
+	tox

@@ -92,7 +92,7 @@ def analyse_hop(header):
     return {
         "from": extract_from_label(header),
         "receivedBy": extract_received_by_label(header),
-        "protocol": extract_protocol_used(header),
+        "protocol": extract_protocol(header),
         "timestamp": extract_timestamp(header)
     }
 
@@ -137,7 +137,7 @@ def extract_received_by_label(header):
     return ''
 
 
-def extract_protocol_used(header):
+def extract_protocol(header):
     """ Get the protocol used. e.g. SMTP, HTTP etc. """
     header = re.sub('\n', ' ', header)
     header = remove_details(header)

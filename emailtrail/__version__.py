@@ -1,7 +1,7 @@
 """ versioning """
 __title__ = 'emailtrail'
 __description__ = 'Analyse hops taken by an Email to reach you. Get structured information about each hop - Hostnames, Protocol used, Timestamp, and Delay'
-__version__ = '0.3.18'
+__version__ = '0.3.20'
 __author__ = 'Akshay Kumar'
 __author_email__ = 'akshay.kmr4321@gmail.com'
 __license__ = 'MIT'

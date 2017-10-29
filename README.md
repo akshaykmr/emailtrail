@@ -109,9 +109,9 @@ a delay of `1 sec ` from `10.103.79.86` to `mx.google.com`
 ```python
 >>> header = """from mail-vk0-x233.google.com (mail-vk0-x233.google.com. [2607:f8b0:400c:c05::233])\n        by mx.google.com with ESMTPS id d124si110912930vka.142.2016.01.12.10.20.45\n        for <support@peacedojo.com>\n        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);\n        Wed, 16 Dec 2015 16:34:34 -0600 """
 
->>> from emailtrail import analyse_hop, extract_protocol_used, extract_from_label, extract_received_by_label, extract_timestamp
+>>> from emailtrail import analyse_hop, extract_protocol, extract_from_label, extract_received_by_label, extract_timestamp
 
->>> extract_protocol_used(header)
+>>> extract_protocol(header)
 "ESMTPS"
 
 >>> extract_from_label(header)

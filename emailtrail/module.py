@@ -64,7 +64,7 @@ def analyse(raw_headers):
         'Cc': decode_and_convert_to_unicode(headers.get('Cc')),
         'Bcc': decode_and_convert_to_unicode(headers.get('Bcc')),
         'trail': trail,
-        'total_delay': sum([hop['delay'] for hop in trail])
+        'total_delay': sum([hop['delay'] for hop in trail]) if trail else 0
     }
 
     return analysis

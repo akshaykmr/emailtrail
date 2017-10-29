@@ -103,7 +103,7 @@ A business opportunity awaits
 """
     expected_analysis = {
         'Bcc': u'satan@wallstreet.com',
-        'Cc': u'None',
+        'Cc': u'',
         'From': u'Mr. Money Bags <bags@moneyrules.com>',
         'To': u'money@capitalism.com;',
         'total_delay': 1,
@@ -133,3 +133,19 @@ A business opportunity awaits
     }
 
     assert expected_analysis == analyse(headers)
+
+
+def test_useless_input():
+    expected_analysis = {
+        'Bcc': u'',
+        'Cc': u'',
+        'From': u'',
+        'To': u'',
+        'trail': None,
+        'total_delay': 0,
+    }
+
+    assert expected_analysis == analyse('')
+
+def test_none_input_returns_none():
+    assert None == analyse(None)

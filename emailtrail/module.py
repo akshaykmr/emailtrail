@@ -184,14 +184,24 @@ def extract_timestring(header):
     header = cleanup_text(header)
     timestring = None
 
-    split = header.split(';')
-    if len(split) != 1:
-        timestring = cleanup_text(split[len(split) - 1])
-    elif len(split) == 1:
-        # try to find timestring on last line
-        split = header.split('\n')
-        timestring = cleanup_text(split[len(split) - 1])
+    split_by_semicolon = header.split(';')
+    split_by_newline = header.split('\n')
+    split_by_id = re.split('\s+id\s+[^\s]*\s+', header)
 
+    if len(split_by_semicolon) > 1:
+        timestring = split_by_semicolon[-1]
+    elif len(split_by_semicolon) == 1:
+        if len(split_by_newline) > 1:
+            # find it on the last line
+            timestring = split_by_newline[-1]
+        elif len(split_by_id) > 1:
+            # find it after` id abc.xyz `
+            timestring = split_by_id[-1]
+
+    if timestring is None:
+        return None
+
+    timestring = cleanup_text(timestring)
     timestring = cleanup_text(remove_details(timestring))
     timestring = strip_timezone_name(timestring)
     timestring = re.sub('-0000', '+0000', timestring)

@@ -39,6 +39,10 @@ class TestTimestringParsing():
                 "by filter0552p1mdw1.sendgrid.net with SMTP id filter0552p1mdw1.16694.5671BCED35\\n        2015-12-16 19:35:09.561998041 -0000 UTC",
                 "2015-12-16 19:35:09.561998041 +0000"
             ],
+            [
+                'by mx0032p1mdw1.sendgrid.net with SMTP id mpeXBqGIOM Sat, 16 Dec 2017 07:12:45 +0000 (UTC)',
+                'Sat, 16 Dec 2017 07:12:45 +0000'
+            ]
 
         ]
 

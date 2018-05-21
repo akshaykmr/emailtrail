@@ -7,8 +7,10 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 <p>
-Analyse hops taken by an Email to reach you. Get structured information about each hop - Hostnames, Protocol used, Timestamp, and Delay.  
+Analyse hops taken by an Email to reach you. Get structured information about each hop - Hostnames, Protocol used, Timestamp, and Delay.
 </p>
+
+**Only tested with Python 2.7**
 
 **In your project:** `pip install emailtrail` or if you use [pipenv](http://pipenv.org/) like me `pipenv install emailtrail`
 
@@ -145,7 +147,7 @@ We assume a delay of `0` for this hop.
 ## Contributing
 emailtrail uses [pipenv](http://pipenv.org/) for managing virtual env and package versions.
 - Fork the repo and clone it.
-- In project root: `pipenv install --dev`. This installs packages required for testing and linting
+- In project root: `pipenv install --dev --two`. This installs packages required for testing and linting
 - Jump into your virutal env: `pipenv shell`
 - Running tests: `pytest`
 - If you want to understand the code, read the test cases first.

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "emailtrail"
-version = "0.1.0"
+version = "0.4.0"
 description = "Analyse hops taken by an Email to reach you. Get structured information about each hop - Hostnames, Protocol used, Timestamp, and Delay"
 authors = ["Akshay Kumar <akshay.kmr4321@gmail.com>"]
 license = "MIT"

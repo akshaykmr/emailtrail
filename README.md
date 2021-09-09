@@ -27,7 +27,7 @@ Analyse hops taken by an Email to reach you. Get structured information about ea
 
 ## Usage
 
-We can analyse_headers an email source or raw headers
+We can analyse an email source or raw headers
 ```python
 email = """
 Delivered-To: money@capitalism.com
@@ -55,7 +55,7 @@ A business opportunity awaits
 """
 ```
 
-#### Lets analyse_headers it
+#### Lets analyse it
 
 ```python
 import emailtrail
@@ -89,7 +89,7 @@ Trail(
     )
   ])
 ```
-The analyse_headers function returns a python dictionary.
+The `analyse_headers` function returns a python dictionary.
 The trail shows the email hops sorted in chronological order. Each intermediary email server adds a `Received` header to the mail, from which the module parses the following information:
 
 - `protocol`  : e.g HTTP, SMTP etc.

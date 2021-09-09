@@ -1,16 +1,18 @@
 from email.parser import HeaderParser
 import re
-import string
 import calendar
 import dateparser
 import pytz
+from typing import List
 
 from .utils import cleanup_text, decode_and_convert_to_unicode
 from .models import Trail, Hop
 
 
-def analyse_headers(raw_headers: str):
+def analyse_headers(raw_headers: str) -> Trail:
     """
+    raw_headers: plain email source, or just headers text. e.g text value of "show original" in
+    gmail.
     sample output:
     Trail(
     to_address='money@capitalism.com;',
@@ -56,7 +58,7 @@ def analyse_headers(raw_headers: str):
     )
 
 
-def analyse_hops(received):
+def analyse_hops(received: str) -> List[Hop]:
     """
     Takes a list of `received` headers and
     creates the email trail (structured information of hops in transit)
@@ -72,7 +74,7 @@ def analyse_hops(received):
     return hops_with_delay_information(hops)
 
 
-def analyse_single_header(header):
+def analyse_single_header(header: str) -> Hop:
     """Parses the details associated with the hop into a structured format"""
     return Hop(
         from_host=extract_from_label(header),
@@ -82,11 +84,11 @@ def analyse_single_header(header):
     )
 
 
-def extract_timestamp(header):
+def extract_timestamp(header: str) -> int:
     return get_timestamp(extract_timestring(header))
 
 
-def hops_with_delay_information(hop_list):
+def hops_with_delay_information(hop_list: List[Hop]) -> List[Hop]:
     """
     For each hop sets the calculated `delay` from previous hop
     NOTE: Mutates list
@@ -98,7 +100,7 @@ def hops_with_delay_information(hop_list):
     return hop_list
 
 
-def extract_from_label(header):
+def extract_from_label(header: str) -> str:
     """Get the hostname associated with `from`"""
     match = re.findall(
         r"""
@@ -113,7 +115,7 @@ def extract_from_label(header):
     return match[0] if match else ""
 
 
-def extract_received_by_label(header):
+def extract_received_by_label(header: str) -> str:
     """Get the hostname associated with `by`"""
     header = re.sub(r"\n", " ", header)
     header = remove_details(header)
@@ -128,7 +130,7 @@ def extract_received_by_label(header):
     return ""
 
 
-def extract_protocol(header):
+def extract_protocol(header: str) -> str:
     """Get the protocol used. e.g. SMTP, HTTP etc."""
     header = re.sub(r"\n", " ", header)
     header = remove_details(header)
@@ -170,7 +172,7 @@ def extract_protocol(header):
     return cleanup_text(protocol)
 
 
-def extract_timestring(header):
+def extract_timestring(header: str) -> str:
     """
     Tries to extract a timestring from a header
     Returns None or a String that *could* be a valid timestring
@@ -206,11 +208,11 @@ def extract_timestring(header):
     return timestring
 
 
-def remove_details(text):
+def remove_details(text: str) -> str:
     return re.sub(r"([(].*?[)])", " ", text)
 
 
-def strip_timezone_name(timestring):
+def strip_timezone_name(timestring: str) -> str:
     """Removes extra timezone name at the end. eg: "-0800 (PST)" -> "-0800" """
     pattern = r"([+]|[-])([0-9]{4})[ ]([(]([a-zA-Z]{3,4})[)]|([a-zA-Z]{3,4}))"
     if re.search(pattern, timestring) is None:
@@ -221,7 +223,7 @@ def strip_timezone_name(timestring):
     return " ".join(split)
 
 
-def get_timestamp(timestring):
+def get_timestamp(timestring: str) -> int:
     """Convert a timestring to unix timestamp"""
 
     if timestring is None:
@@ -235,7 +237,7 @@ def get_timestamp(timestring):
     return calendar.timegm(date.utctimetuple())
 
 
-def calculate_delay(current_timestamp, previous_timestamp):
+def calculate_delay(current_timestamp: int, previous_timestamp: int) -> int:
     """Returns delay for two unix timestamps"""
     if current_timestamp is None or previous_timestamp is None:
         return 0

@@ -10,9 +10,9 @@
 Analyse hops taken by an Email to reach you. Get structured information about each hop - Hostnames, Protocol used, Timestamp, and Delay. [Try it out in your browser](https://emailtrail.herokuapp.com/)
 
 
-**Only tested with Python 2.7**
+**Only tested with Python 3.9**
 
-**In your project:** `pip install emailtrail` or if you use [pipenv](http://pipenv.org/) like me `pipenv install emailtrail`
+**In your project:** `pip install emailtrail` or if you use [poetry](https://python-poetry.org/) like me `poetry install emailtrail`
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->

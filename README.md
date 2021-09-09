@@ -63,43 +63,38 @@ emailtrail.analyse_headers(email)
 ```
 
 ```python
-{
-  'To': u'money@capitalism.com;',
-  'From': u'Mr. Money Bags <bags@moneyrules.com>',
-  'Bcc': u'satan@wallstreet.com',
-  'Cc': u'None',
-  'total_delay': 1,
-  'trail': [
-    {
-      'delay': 0,
-      'from': '',
-      'protocol': 'HTTP',
-      'receivedBy': '10.103.79.86',
-      'timestamp': 1507623421
-    },
-    {
-      'delay': 1,
-      'from': 'mail-sor-f65.google.com',
-      'protocol': 'SMTPS',
-      'receivedBy': 'mx.google.com',
-      'timestamp': 1507623422
-    },
-    {
-      'delay': 0,
-      'from': '',
-      'protocol': 'SMTP',
-      'receivedBy': '10.129.52.209',
-      'timestamp': 1507623422
-    }
-  ]
-}
+Trail(
+  to_address='money@capitalism.com;',
+  from_address='Mr. Money Bags <bags@moneyrules.com>', cc='', bcc='satan@wallstreet.com',
+  hops=[
+    Hop(from_host='',
+      protocol='HTTP',
+      received_by_host='10.103.79.86',
+      timestamp=1507623421,
+      delay=0
+    ),
+    Hop(
+      from_host='mail-sor-f65.google.com',
+      protocol='SMTPS',
+      received_by_host='mx.google.com',
+      timestamp=1507623422,
+      delay=1
+    ),
+    Hop(
+      from_host='',
+      protocol='SMTP',
+      received_by_host='10.129.52.209',
+      timestamp=1507623422,
+      delay=0
+    )
+  ])
 ```
 The analyse_headers function returns a python dictionary.
 The trail shows the email hops sorted in chronological order. Each intermediary email server adds a `Received` header to the mail, from which the module parses the following information:
 
 - `protocol`  : e.g HTTP, SMTP etc.
-- `from`      : The name the sending computer gave for itself
-- `receivedBy`: The receiving computers name
+- `from_host`      : The name the sending computer gave for itself
+- `received_by_host`: The receiving computers name
 - `timestamp` : Unix epoch
 
 An empty string value is set for fields which couldn't be determined.
@@ -126,13 +121,12 @@ a delay of `1 sec ` from `10.103.79.86` to `mx.google.com`
 1450305274
 
 >>> analyse_single_header(header)
-{
-    "from": "mail-vk0-x233.google.com",
-    received_by_host= "mx.google.com",
-    "protocol": "ESMTPS",
-    "timestamp": 1450305274
-}
-
+Hop(
+  from_host='mail-vk0-x233.google.com',
+  protocol='ESMTPS',
+  received_by_host='mx.google.com',
+  timestamp=1450305274
+)
 ```
 
 
@@ -145,12 +139,12 @@ It means that either one or both of the servers clocks are off.
 We assume a delay of `0` for this hop.
 
 ## Contributing
-emailtrail uses [pipenv](http://pipenv.org/) for managing virtual env and package versions.
+emailtrail uses [poetry](https://python-poetry.org/) for managing virtual env and package versions.
 - Fork the repo and clone it.
-- In project root: `pipenv install --dev --two`. This installs packages required for testing and linting
-- Jump into your virutal env: `pipenv shell`
+- In project root: `poetry install`. This installs packages required for testing and linting
+- Jump into your virutal env: `poetry shell`
 - Running tests: `pytest`
-- If you want to understand the code, read the test cases first.
+- If you want to understand the code, read the test cases first. It's mostly regex tuned for some email dataset. We need to run this against more datasets to cover more edge cases (emails are wild!).
 - Make your changes -> Pass the tests -> Push to your branch -> Create pull request -> Profit ??
 
 

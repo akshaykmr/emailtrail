@@ -7,9 +7,11 @@ from .module import (
     extract_received_by_label,
     calculate_delay,
     get_path_delay,
-    set_delay_information,
+    hops_with_delay_information,
     remove_details,
     extract_timestring,
     strip_timezone_name,
     get_timestamp,
 )
+
+from .models import Trail, Hop

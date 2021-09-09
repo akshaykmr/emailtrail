@@ -128,7 +128,7 @@ a delay of `1 sec ` from `10.103.79.86` to `mx.google.com`
 >>> analyse_single_header(header)
 {
     "from": "mail-vk0-x233.google.com",
-    "receivedBy": "mx.google.com",
+    received_by_host= "mx.google.com",
     "protocol": "ESMTPS",
     "timestamp": 1450305274
 }

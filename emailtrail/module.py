@@ -5,7 +5,7 @@ import calendar
 import dateparser
 import pytz
 
-from utils import cleanup_text, decode_and_convert_to_unicode
+from .utils import cleanup_text, decode_and_convert_to_unicode
 
 
 def analyse(raw_headers):
@@ -53,7 +53,7 @@ def analyse(raw_headers):
         return None
     raw_headers = raw_headers.strip()
     parser = HeaderParser()
-    headers = parser.parsestr(raw_headers.encode("ascii", "ignore"))
+    headers = parser.parsestr(raw_headers)
     received_headers = headers.get_all("Received")
 
     trail = generate_trail(received_headers)
@@ -230,7 +230,7 @@ def strip_timezone_name(timestring):
 
     split = timestring.split(" ")
     split.pop()
-    return string.join(split, " ")
+    return " ".join(split)
 
 
 def get_timestamp(timestring):

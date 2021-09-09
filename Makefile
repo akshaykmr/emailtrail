@@ -7,7 +7,7 @@ help:
 
 
 setup:
-	poetry init
+	poetry install
 
 activate:
 	poetry shell

@@ -12,7 +12,7 @@ Analyse hops taken by an Email to reach you. Get structured information about ea
 
 **Only tested with Python 3.9**
 
-**In your project:** `pip install emailtrail` or if you use [poetry](https://python-poetry.org/) like me `poetry install emailtrail`
+**In your project:** `pip install emailtrail` or if you use [poetry](https://python-poetry.org/) like me `poetry add emailtrail`
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->

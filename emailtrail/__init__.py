@@ -1,6 +1,6 @@
 from .module import (
-    analyse,
-    analyse_hop,
+    analyse_headers,
+    analyse_single_header,
     extract_from_label,
     extract_protocol,
     extract_timestamp,

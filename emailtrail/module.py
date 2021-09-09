@@ -8,7 +8,7 @@ import pytz
 from .utils import cleanup_text, decode_and_convert_to_unicode
 
 
-def analyse(raw_headers):
+def analyse_headers(raw_headers: str):
     """
     sample output:
     {
@@ -79,7 +79,7 @@ def generate_trail(received):
         return None
 
     received = [cleanup_text(header) for header in received]
-    trail = [analyse_hop(header) for header in received]
+    trail = [analyse_single_header(header) for header in received]
 
     # sort in chronological order
     trail.reverse()
@@ -87,7 +87,7 @@ def generate_trail(received):
     return trail
 
 
-def analyse_hop(header):
+def analyse_single_header(header):
     """Parses the details associated with the hop into a structured format"""
     return {
         "from": extract_from_label(header),
@@ -113,7 +113,7 @@ def set_delay_information(hop_list):
 def extract_from_label(header):
     """Get the hostname associated with `from`"""
     match = re.findall(
-        """
+        r"""
         from\s+
         (.*?)
         (?:\s+|$)
@@ -127,22 +127,22 @@ def extract_from_label(header):
 
 def extract_received_by_label(header):
     """Get the hostname associated with `by`"""
-    header = re.sub("\n", " ", header)
+    header = re.sub(r"\n", " ", header)
     header = remove_details(header)
     header = cleanup_text(header)
 
     if header.startswith("from"):
-        match = re.findall("from\s+(?:.*?)\s+by\s+(.*?)(?:\s+|$)", header)
+        match = re.findall(r"from\s+(?:.*?)\s+by\s+(.*?)(?:\s+|$)", header)
         return match[0] if match else ""
     elif header.startswith("by"):
-        match = re.findall("by\s+(.*?)(?:\s+|$)", header)
+        match = re.findall(r"by\s+(.*?)(?:\s+|$)", header)
         return match[0] if match else ""
     return ""
 
 
 def extract_protocol(header):
     """Get the protocol used. e.g. SMTP, HTTP etc."""
-    header = re.sub("\n", " ", header)
+    header = re.sub(r"\n", " ", header)
     header = remove_details(header)
     header = cleanup_text(header)
 
@@ -150,7 +150,7 @@ def extract_protocol(header):
 
     if header.startswith("from"):
         match = re.findall(
-            """
+            r"""
             from\s+(?:.*?)\s+by\s+(?:.*?)\s+
             (?:
                 (?:with|via)
@@ -165,7 +165,7 @@ def extract_protocol(header):
         protocol = match[0] if match else ""
     if header.startswith("by"):
         match = re.findall(
-            """
+            r"""
             by\s+(?:.*?)\s+
             (?:
                 (?:with|via)
@@ -195,7 +195,7 @@ def extract_timestring(header):
 
     split_by_semicolon = header.split(";")
     split_by_newline = header.split("\n")
-    split_by_id = re.split("\s+id\s+[^\s]*\s+", header)
+    split_by_id = re.split(r"\s+id\s+[^\s]*\s+", header)
 
     if len(split_by_semicolon) > 1:
         timestring = split_by_semicolon[-1]
@@ -213,18 +213,18 @@ def extract_timestring(header):
     timestring = cleanup_text(timestring)
     timestring = cleanup_text(remove_details(timestring))
     timestring = strip_timezone_name(timestring)
-    timestring = re.sub("-0000", "+0000", timestring)
+    timestring = re.sub(r"-0000", "+0000", timestring)
 
     return timestring
 
 
 def remove_details(text):
-    return re.sub("([(].*?[)])", " ", text)
+    return re.sub(r"([(].*?[)])", " ", text)
 
 
 def strip_timezone_name(timestring):
     """Removes extra timezone name at the end. eg: "-0800 (PST)" -> "-0800" """
-    pattern = "([+]|[-])([0-9]{4})[ ]([(]([a-zA-Z]{3,4})[)]|([a-zA-Z]{3,4}))"
+    pattern = r"([+]|[-])([0-9]{4})[ ]([(]([a-zA-Z]{3,4})[)]|([a-zA-Z]{3,4}))"
     if re.search(pattern, timestring) is None:
         return timestring
 

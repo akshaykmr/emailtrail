@@ -7,11 +7,10 @@ help:
 
 
 setup:
-	pip install pipenv
-	pipenv install --dev
+	poetry init
 
 activate:
-	pipenv shell
+	poetry shell
 
 test:
-	pipenv run pytest
+	poetry run pytest

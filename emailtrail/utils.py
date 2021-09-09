@@ -25,7 +25,7 @@ def normalize_tabchar(text):
 
 def decode_and_convert_to_unicode(text):
     if not text:
-        return ''
+        return ""
     try:
         header = make_header(decode_header(text))
         if python_version_greater_than_three():

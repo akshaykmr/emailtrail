@@ -12,43 +12,31 @@ from .models import Trail, Hop
 def analyse_headers(raw_headers: str):
     """
     sample output:
-    {
-        'To': u'robin@apple.com',
-        'From': u'Dhruv <dhruv@foo.com>',
-        'Cc': u'Shivam <shivam@foo.com>',
-        'Bcc': u'Abhishek <quirk@foo.com>',
-        'total_delay': 2,
-        'trail': [
-            {
-                'from': '',
-                'protocol': 'HTTP',
-                'receivedBy': '10.31.102.130',
-                'timestamp': 1452574216,
-                'delay': 0
-            },
-            {
-                'from': '',
-                'protocol': 'SMTP',
-                'receivedBy': 'mail-vk0-x22b.google.com',
-                'timestamp': 1452574218,
-                'delay': 2
-            },
-            {
-                'from': 'mail-vk0-x22b.google.com',
-                'protocol': 'ESMTPS',
-                'receivedBy': 'mx.google.com',
-                'timestamp': 1452574218,
-                'delay': 0
-            },
-            {
-                'from': '',
-                'protocol': 'SMTP',
-                'receivedBy': '10.66.77.65',
-                'timestamp': 1452574218,
-                'delay': 0
-            }
-        ]
-    }
+    Trail(
+    to_address='money@capitalism.com;',
+    from_address='Mr. Money Bags <bags@moneyrules.com>', cc='', bcc='satan@wallstreet.com',
+    hops=[
+        Hop(from_host='',
+        protocol='HTTP',
+        received_by_host='10.103.79.86',
+        timestamp=1507623421,
+        delay=0
+        ),
+        Hop(
+        from_host='mail-sor-f65.google.com',
+        protocol='SMTPS',
+        received_by_host='mx.google.com',
+        timestamp=1507623422,
+        delay=1
+        ),
+        Hop(
+        from_host='',
+        protocol='SMTP',
+        received_by_host='10.129.52.209',
+        timestamp=1507623422,
+        delay=0
+        )
+    ])
     """
     if raw_headers is None:
         raise TypeError("empty headers")

@@ -16,10 +16,10 @@ from pprint import pprint
 import xmltodict
 from emailtrail import analyse
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
-    filename = 'query_result_10000.xml'
-    dirname = 'dataset'
+    filename = "query_result_10000.xml"
+    dirname = "dataset"
 
     current_dir = os.path.dirname(__file__)
 
@@ -27,14 +27,14 @@ if __name__ == '__main__':
         doc = xmltodict.parse(fd.read())
 
     total_parse_error = 0
-    for row in doc['support_novo']['custom']['row']:
+    for row in doc["support_novo"]["custom"]["row"]:
 
-        mail_header = row['source']
+        mail_header = row["source"]
         analysis = analyse(mail_header)
 
-        if analysis is not None and analysis['trail'] is not None:
+        if analysis is not None and analysis["trail"] is not None:
             pprint(analysis)
-            print '\n\n----------------------------------------\n\n'
+            print("\n\n----------------------------------------\n\n")
         else:
             total_parse_error += 1
 

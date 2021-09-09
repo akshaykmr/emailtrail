@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "emailtrail"
+version = "0.1.0"
+description = ""
+authors = ["Akshay Kumar <akshay.kmr4321@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+dateparser = "^1.0.0"
+pytz = "^2021.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+xmltodict = "^0.12.0"
+flake8 = "^3.9.2"
+black = "^21.8b0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -10,49 +10,49 @@ class TestTimestringParsing:
             with pytest.raises(TypeError):
                 extract_timestring(arg)
 
-    def test_stripping_extra_timezone_name(self):
-        cases = [
-            # [ input, expected_output]
-            [
+    @pytest.mark.parametrize(
+        "raw, expected",
+        [
+            (
                 "Wed, 16 Dec 2015 11:35:21 -0800 (PST)",
                 "Wed, 16 Dec 2015 11:35:21 -0800",
-            ],
-            [
+            ),
+            (
                 "2015-12-16 19:35:09.561998041 +0000 (UTC)",
                 "2015-12-16 19:35:09.561998041 +0000",
-            ],
-        ]
+            ),
+        ],
+    )
+    def test_stripping_extra_timezone_name(self, raw, expected):
+        assert strip_timezone_name(raw) == expected
 
-        for case in cases:
-            assert case[1] == strip_timezone_name(case[0])
-
-    def test_parsing(self):
-        cases = [
-            # [input, expected_output]
-            [
+    @pytest.mark.parametrize(
+        "raw, expected",
+        [
+            (
                 "by 10.66.248.3 with SMTP id yi3csp3166871pac;\\n        Wed, 16 Dec 2015 11:35:21 -0800 (PST)",
                 "Wed, 16 Dec 2015 11:35:21 -0800",
-            ],
-            [
+            ),
+            (
                 "from o1.email.pandawarrior.com (o1.email.pandawarrior.com. [192.254.121.229])\\n        by mx.google.com with ESMTPS id sa1si40590233igb.58.2015.12.16.12.15.05\\n        for <sales.outbound@pandawarrior.com>\\n        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);\\n        Wed, 16 Dec 2015 12:15:06 -0800 (PST)",
                 "Wed, 16 Dec 2015 12:15:06 -0800",
-            ],
-            [
+            ),
+            (
                 "by filter0552p1mdw1.sendgrid.net with SMTP id filter0552p1mdw1.16694.5671BCED35\\n        2015-12-16 19:35:09.561998041 +0000 UTC",
                 "2015-12-16 19:35:09.561998041 +0000",
-            ],
-            [
+            ),
+            (
                 "by filter0552p1mdw1.sendgrid.net with SMTP id filter0552p1mdw1.16694.5671BCED35\\n        2015-12-16 19:35:09.561998041 -0000 UTC",
                 "2015-12-16 19:35:09.561998041 +0000",
-            ],
-            [
+            ),
+            (
                 "by mx0032p1mdw1.sendgrid.net with SMTP id mpeXBqGIOM Sat, 16 Dec 2017 07:12:45 +0000 (UTC)",
                 "Sat, 16 Dec 2017 07:12:45 +0000",
-            ],
-        ]
-
-        for case in cases:
-            assert case[1] == extract_timestring(case[0])
+            ),
+        ],
+    )
+    def test_parsing(self, raw, expected):
+        assert extract_timestring(raw) == expected
 
 
 class TestTimestampParsing:

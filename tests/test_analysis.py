@@ -1,5 +1,5 @@
 import pytest
-from emailtrail import analyse, analyse_hop, set_delay_information
+from emailtrail import analyse_headers, analyse_single_header, set_delay_information
 
 
 @pytest.mark.parametrize(
@@ -26,7 +26,7 @@ from emailtrail import analyse, analyse_hop, set_delay_information
     ],
 )
 def test_hop_analysis(header, expected):
-    assert analyse_hop(header) == expected
+    assert analyse_single_header(header) == expected
 
 
 def test_adding_delay_information():
@@ -134,7 +134,7 @@ A business opportunity awaits
         ],
     }
 
-    assert expected_analysis == analyse(headers)
+    assert expected_analysis == analyse_headers(headers)
 
 
 def test_useless_input():
@@ -147,9 +147,9 @@ def test_useless_input():
         "total_delay": 0,
     }
 
-    assert expected_analysis == analyse("")
+    assert expected_analysis == analyse_headers("")
 
 
 def test_none_input_returns_none():
     with pytest.raises(TypeError):
-        analyse(None)
+        analyse_headers(None)

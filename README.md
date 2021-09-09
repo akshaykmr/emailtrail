@@ -27,7 +27,7 @@ Analyse hops taken by an Email to reach you. Get structured information about ea
 
 ## Usage
 
-We can analyse an email source or raw headers
+We can analyse_headers an email source or raw headers
 ```python
 email = """
 Delivered-To: money@capitalism.com
@@ -55,11 +55,11 @@ A business opportunity awaits
 """
 ```
 
-#### Lets analyse it
+#### Lets analyse_headers it
 
 ```python
 import emailtrail
-emailtrail.analyse(email)
+emailtrail.analyse_headers(email)
 ```
 
 ```python
@@ -94,7 +94,7 @@ emailtrail.analyse(email)
   ]
 }
 ```
-The analyse function returns a python dictionary.
+The analyse_headers function returns a python dictionary.
 The trail shows the email hops sorted in chronological order. Each intermediary email server adds a `Received` header to the mail, from which the module parses the following information:
 
 - `protocol`  : e.g HTTP, SMTP etc.
@@ -111,7 +111,7 @@ a delay of `1 sec ` from `10.103.79.86` to `mx.google.com`
 ```python
 >>> header = """from mail-vk0-x233.google.com (mail-vk0-x233.google.com. [2607:f8b0:400c:c05::233])\n        by mx.google.com with ESMTPS id d124si110912930vka.142.2016.01.12.10.20.45\n        for <support@peacedojo.com>\n        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);\n        Wed, 16 Dec 2015 16:34:34 -0600 """
 
->>> from emailtrail import analyse_hop, extract_protocol, extract_from_label, extract_received_by_label, extract_timestamp
+>>> from emailtrail import analyse_single_header, extract_protocol, extract_from_label, extract_received_by_label, extract_timestamp
 
 >>> extract_protocol(header)
 "ESMTPS"
@@ -125,7 +125,7 @@ a delay of `1 sec ` from `10.103.79.86` to `mx.google.com`
 >>> extract_timestamp(header)
 1450305274
 
->>> analyse_hop(header)
+>>> analyse_single_header(header)
 {
     "from": "mail-vk0-x233.google.com",
     "receivedBy": "mx.google.com",

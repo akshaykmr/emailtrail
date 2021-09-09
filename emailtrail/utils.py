@@ -1,5 +1,4 @@
-import sys
-from email.header import decode_header, make_header, Header
+from email.header import decode_header, make_header
 
 
 def cleanup_text(text: str) -> str:

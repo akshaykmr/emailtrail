@@ -6,6 +6,7 @@ import dateparser
 import pytz
 
 from .utils import cleanup_text, decode_and_convert_to_unicode
+from .models import Trail, Hop
 
 
 def analyse_headers(raw_headers: str):
@@ -56,57 +57,56 @@ def analyse_headers(raw_headers: str):
     headers = parser.parsestr(raw_headers)
     received_headers = headers.get_all("Received")
 
-    trail = generate_trail(received_headers)
+    trail = analyse_hops(received_headers)
 
-    analysis = {
-        "From": decode_and_convert_to_unicode(headers.get("From")),
-        "To": decode_and_convert_to_unicode(headers.get("To")),
-        "Cc": decode_and_convert_to_unicode(headers.get("Cc")),
-        "Bcc": decode_and_convert_to_unicode(headers.get("Bcc")),
-        "trail": trail,
-        "total_delay": sum([hop["delay"] for hop in trail]) if trail else 0,
-    }
-
-    return analysis
+    return Trail(
+        from_address=decode_and_convert_to_unicode(headers.get("From")),
+        to_address=decode_and_convert_to_unicode(headers.get("To")),
+        cc=decode_and_convert_to_unicode(headers.get("Cc")),
+        bcc=decode_and_convert_to_unicode(headers.get("Bcc")),
+        hops=trail,
+    )
 
 
-def generate_trail(received):
+def analyse_hops(received):
     """
     Takes a list of `received` headers and
     creates the email trail (structured information of hops in transit)
     """
     if received is None:
-        return None
+        return []
 
     received = [cleanup_text(header) for header in received]
-    trail = [analyse_single_header(header) for header in received]
+    hops = [analyse_single_header(header) for header in received]
 
     # sort in chronological order
-    trail.reverse()
-    trail = set_delay_information(trail)
-    return trail
+    hops.reverse()
+    return hops_with_delay_information(hops)
 
 
 def analyse_single_header(header):
     """Parses the details associated with the hop into a structured format"""
-    return {
-        "from": extract_from_label(header),
-        "receivedBy": extract_received_by_label(header),
-        "protocol": extract_protocol(header),
-        "timestamp": extract_timestamp(header),
-    }
+    return Hop(
+        from_host=extract_from_label(header),
+        received_by_host=extract_received_by_label(header),
+        protocol=extract_protocol(header),
+        timestamp=extract_timestamp(header),
+    )
 
 
 def extract_timestamp(header):
     return get_timestamp(extract_timestring(header))
 
 
-def set_delay_information(hop_list):
-    """For each hop sets the calculated `delay` from previous hop | mutates list"""
+def hops_with_delay_information(hop_list):
+    """
+    For each hop sets the calculated `delay` from previous hop
+    NOTE: Mutates list
+    """
     previous_timestamp = None
     for hop in hop_list:
-        hop["delay"] = calculate_delay(hop["timestamp"], previous_timestamp)
-        previous_timestamp = hop["timestamp"]
+        hop.delay = calculate_delay(hop.timestamp, previous_timestamp)
+        previous_timestamp = hop.timestamp
     return hop_list
 
 

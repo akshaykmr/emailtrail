@@ -50,7 +50,7 @@ def analyse(raw_headers):
     }
     """
     if raw_headers is None:
-        return None
+        raise TypeError("empty headers")
     raw_headers = raw_headers.strip()
     parser = HeaderParser()
     headers = parser.parsestr(raw_headers)

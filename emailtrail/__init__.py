@@ -11,5 +11,5 @@ from .module import (
     remove_details,
     extract_timestring,
     strip_timezone_name,
-    get_timestamp
+    get_timestamp,
 )

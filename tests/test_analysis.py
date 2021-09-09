@@ -1,9 +1,11 @@
+import pytest
 from emailtrail import analyse, analyse_hop, set_delay_information
 
 
-def test_hop_analysis():
-    cases = [
-        [
+@pytest.mark.parametrize(
+    "header,expected",
+    [
+        (
             "from mail-vk0-x233.google.com (mail-vk0-x233.google.com. [2607:f8b0:400c:c05::233])\n        by mx.google.com with ESMTPS id d124si110912930vka.142.2016.01.12.10.20.45\n        for <support@peacedojo.com>\n        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);\n        Wed, 16 Dec 2015 16:34:34 -0600",
             {
                 "from": "mail-vk0-x233.google.com",
@@ -11,8 +13,8 @@ def test_hop_analysis():
                 "protocol": "ESMTPS",
                 "timestamp": 1450305274,
             },
-        ],
-        [
+        ),
+        (
             "by mailr.blah.com for <sales@hohoho.com>; Fri, 18 Dec 2015 15:37:27 GMT",
             {
                 "from": "",
@@ -20,11 +22,11 @@ def test_hop_analysis():
                 "protocol": "",
                 "timestamp": 1450453047,
             },
-        ],
-    ]
-
-    for case in cases:
-        assert case[1] == analyse_hop(case[0])
+        ),
+    ],
+)
+def test_hop_analysis(header, expected):
+    assert analyse_hop(header) == expected
 
 
 def test_adding_delay_information():
@@ -149,4 +151,5 @@ def test_useless_input():
 
 
 def test_none_input_returns_none():
-    assert None == analyse(None)
+    with pytest.raises(TypeError):
+        analyse(None)

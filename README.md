@@ -28,7 +28,7 @@ Analyse hops taken by an Email to reach you. Get structured information about ea
 ## Usage
 
 We can analyse an email source or raw headers
-```python
+```python3
 email = """
 Delivered-To: money@capitalism.com
 Received: by 10.129.52.209 with SMTP id b200csp1430876ywa;
@@ -57,17 +57,18 @@ A business opportunity awaits
 
 #### Lets analyse it
 
-```python
+```python3
 import emailtrail
 emailtrail.analyse_headers(email)
 ```
 
-```python
+```python3
 Trail(
   to_address='money@capitalism.com;',
   from_address='Mr. Money Bags <bags@moneyrules.com>', cc='', bcc='satan@wallstreet.com',
   hops=[
-    Hop(from_host='',
+    Hop(
+      from_host='',
       protocol='HTTP',
       received_by_host='10.103.79.86',
       timestamp=1507623421,
@@ -89,7 +90,6 @@ Trail(
     )
   ])
 ```
-The `analyse_headers` function returns a python dictionary.
 The trail shows the email hops sorted in chronological order. Each intermediary email server adds a `Received` header to the mail, from which the module parses the following information:
 
 - `protocol`  : e.g HTTP, SMTP etc.
@@ -103,7 +103,7 @@ a delay of `1 sec ` from `10.103.79.86` to `mx.google.com`
 
 #### Analysing a single `Received` header
 
-```python
+```python3
 >>> header = """from mail-vk0-x233.google.com (mail-vk0-x233.google.com. [2607:f8b0:400c:c05::233])\n        by mx.google.com with ESMTPS id d124si110912930vka.142.2016.01.12.10.20.45\n        for <support@peacedojo.com>\n        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);\n        Wed, 16 Dec 2015 16:34:34 -0600 """
 
 >>> from emailtrail import analyse_single_header, extract_protocol, extract_from_label, extract_received_by_label, extract_timestamp

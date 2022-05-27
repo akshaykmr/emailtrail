@@ -1,3 +1,3 @@
 from .module import *  # noqa
 
-from .models import Trail, Hop # noqa
+from .models import Trail, Hop  # noqa

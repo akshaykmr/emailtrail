@@ -1,0 +1,21 @@
+name: Test
+on:
+  pull_request:
+  push:
+    branches:    
+      - master
+      - development
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo content # fetch the contents of the repository
+        uses: actions/checkout@v2
+      - name: setup
+        run: |
+          ls
+          make setup
+      - name: Pytest
+        run: |
+          make test

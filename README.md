@@ -6,7 +6,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 
-Analyse hops taken by an Email to reach you. Get structured information about each hop - Hostnames, Protocol used, Timestamp, and Delay. [Try it out in your browser](https://emailtrail.herokuapp.com/)
+Analyse hops taken by an Email to reach you. Get structured information about each hop - Hostnames, Protocol used, Timestamp, and Delay. [Try it out in your browser](https://emailtrail.oorja.io/)
 
 
 **Tested with Python 3.9+**
@@ -149,7 +149,7 @@ emailtrail uses [poetry](https://python-poetry.org/) for managing virtual env an
 
 ### Webapp
 
-If you are looking for the source code of the [webapp](https://emailtrail.herokuapp.com/) in the description, you can find it [over here](https://github.com/akshayKMR/emailtrail-webapp). It's a little python webserver and a single page frontend app made with vue.js
+If you are looking for the source code of the [webapp](https://emailtrail.oorja.io/) in the description, you can find it [over here](https://github.com/akshayKMR/emailtrail-webapp). It's a little python webserver and a single page frontend app made with vue.js
 
 
 #### Miscellaneous

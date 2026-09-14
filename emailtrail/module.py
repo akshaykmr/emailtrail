@@ -177,7 +177,7 @@ def extract_timestring(header: str) -> str:
     Tries to extract a timestring from a header
     Returns None or a String that *could* be a valid timestring
     """
-    if type(header) != str:
+    if not isinstance(header, str):
         raise TypeError
 
     header = cleanup_text(header)

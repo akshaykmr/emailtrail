@@ -2,9 +2,9 @@ import pytest
 
 from emailtrail import (
     extract_from_label,
+    extract_protocol,
     extract_received_by_label,
     remove_details,
-    extract_protocol,
 )
 
 

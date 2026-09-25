@@ -9,9 +9,10 @@
 Analyse hops taken by an Email to reach you. Get structured information about each hop - Hostnames, Protocol used, Timestamp, and Delay. [Try it out in your browser](https://emailtrail.oorja.io/)
 
 
-**Tested with Python 3.9+**
+**Requires Python 3.11+. Tested on Python 3.11–3.14.**
 
-**In your project:** `pip install emailtrail` or if you use [poetry](https://python-poetry.org/) like me `poetry add emailtrail`
+**In your project:** `pip install emailtrail` or `uv add emailtrail`.
+Python 3.9/3.10 users can continue using `emailtrail==0.4.0`.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -58,36 +59,40 @@ A business opportunity awaits
 
 ```python3
 import emailtrail
+
 emailtrail.analyse_headers(email)
 ```
 
 ```python3
 Trail(
-  to_address='money@capitalism.com;',
-  from_address='Mr. Money Bags <bags@moneyrules.com>', cc='', bcc='satan@wallstreet.com',
-  hops=[
-    Hop(
-      from_host='',
-      protocol='HTTP',
-      received_by_host='10.103.79.86',
-      timestamp=1507623421,
-      delay=0
-    ),
-    Hop(
-      from_host='mail-sor-f65.google.com',
-      protocol='SMTPS',
-      received_by_host='mx.google.com',
-      timestamp=1507623422,
-      delay=1
-    ),
-    Hop(
-      from_host='',
-      protocol='SMTP',
-      received_by_host='10.129.52.209',
-      timestamp=1507623422,
-      delay=0
-    )
-  ])
+    to_address="money@capitalism.com;",
+    from_address="Mr. Money Bags <bags@moneyrules.com>",
+    cc="",
+    bcc="satan@wallstreet.com",
+    hops=[
+        Hop(
+            from_host="",
+            protocol="HTTP",
+            received_by_host="10.103.79.86",
+            timestamp=1507623421,
+            delay=0,
+        ),
+        Hop(
+            from_host="mail-sor-f65.google.com",
+            protocol="SMTPS",
+            received_by_host="mx.google.com",
+            timestamp=1507623422,
+            delay=1,
+        ),
+        Hop(
+            from_host="",
+            protocol="SMTP",
+            received_by_host="10.129.52.209",
+            timestamp=1507623422,
+            delay=0,
+        ),
+    ],
+)
 ```
 The trail shows the email hops sorted in chronological order. Each intermediary email server adds a `Received` header to the mail, from which the module parses the following information:
 
@@ -96,7 +101,8 @@ The trail shows the email hops sorted in chronological order. Each intermediary 
 - `received_by_host`: The receiving computers name
 - `timestamp` : Unix epoch
 
-An empty string value is set for fields which couldn't be determined.
+Host and protocol fields are empty strings when they cannot be determined;
+an unparseable timestamp is `None`.
 - `delay`: The delay (in seconds) is computed by taking the difference of two consecutive hops. In above example there was
 a delay of `1 sec ` from `10.103.79.86` to `mx.google.com`
 
@@ -138,13 +144,30 @@ It means that either one or both of the servers clocks are off.
 We assume a delay of `0` for this hop.
 
 ## Contributing
-emailtrail uses [poetry](https://python-poetry.org/) for managing virtual env and package versions.
-- Fork the repo and clone it.
-- In project root: `poetry install`. This installs packages required for testing and linting
-- Jump into your virutal env: `poetry shell`
-- Running tests: `pytest`
+emailtrail uses [uv](https://docs.astral.sh/uv/) for Python, virtual environments,
+and dependencies. Install uv, fork the repository, and clone it, then run:
+
+```sh
+uv sync --locked
+uv run --locked pytest
+uv run --locked ruff check .
+uv run --locked ruff format --check .
+```
+
+The default development Python is 3.14; uv downloads it if needed. To test another
+supported version, use `uv run --locked --python 3.11 pytest`. The committed
+`uv.lock` makes development and CI reproducible. Run `uv lock --upgrade` when
+intentionally updating dependencies, and commit the updated lockfile.
+
+- Format code with `uv run ruff format .`.
+- Build distributions with `make build` (or `uv build` and `uv run twine check --strict dist/*`).
+- The optional dataset helper uses `uv run --group dataset python -m analyse_dataset.run`;
+  provide your own XML dataset as described in that script.
 - If you want to understand the code, read the test cases first. It's mostly regex tuned for some email dataset. We need to run this against more datasets to cover more edge cases (emails are wild!).
 - Make your changes -> Pass the tests -> Push to your branch -> Create pull request -> Profit ??
+
+See [CHANGELOG.md](CHANGELOG.md) for changes and [RELEASING.md](RELEASING.md) for
+the PyPI release process.
 
 
 ### Webapp
@@ -158,7 +181,6 @@ In the middle of developing this module, I switched to TDD. Albeit slow for a fi
 - Forces you to think how to structure your code.
 - Less coupling, small functions with minimal to none side effects, well defined interfaces.
 - Confidence in refactoring code quickly. (Everyone loves it when their investments pay off)
-
 
 
 

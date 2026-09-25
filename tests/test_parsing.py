@@ -1,9 +1,16 @@
 import pytest
 
-from emailtrail import extract_timestring, strip_timezone_name, get_timestamp
+from emailtrail import extract_timestring, get_timestamp, strip_timezone_name
 
 
 class TestTimestringParsing:
+    def test_string_subclass_is_accepted(self):
+        class Header(str):
+            pass
+
+        header = Header("by mx.example.com; Wed, 16 Dec 2015 16:34:34 -0600")
+        assert extract_timestring(header) == "Wed, 16 Dec 2015 16:34:34 -0600"
+
     def test_exception_if_input_is_not_string(self):
         invalid_args = [[], {}, None]
         for arg in invalid_args:

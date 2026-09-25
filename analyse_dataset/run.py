@@ -9,15 +9,17 @@ my dataset:-
 you will need to make some adjustments to iterate over email headers as per your data
 
 run (from project root):
-$ python -m analyse_dataset.run > out.txt
+$ uv run --group dataset python -m analyse_dataset.run > out.txt
 """
+
 import os
 from pprint import pprint
+
 import xmltodict
+
 from emailtrail import analyse_headers
 
 if __name__ == "__main__":
-
     filename = "query_result_10000.xml"
     dirname = "dataset"
 
@@ -28,11 +30,10 @@ if __name__ == "__main__":
 
     total_parse_error = 0
     for row in doc["support_novo"]["custom"]["row"]:
-
         mail_header = row["source"]
         analysis = analyse_headers(mail_header)
 
-        if analysis is not None and analysis["trail"] is not None:
+        if analysis.hops:
             pprint(analysis)
             print("\n\n----------------------------------------\n\n")
         else:

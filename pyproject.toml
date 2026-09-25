@@ -1,21 +1,46 @@
-[tool.poetry]
+[project]
 name = "emailtrail"
-version = "0.4.0"
-description = "Analyse hops taken by an Email to reach you. Get structured information about each hop - Hostnames, Protocol used, Timestamp, and Delay"
-authors = ["Akshay Kumar <akshay.kmr4321@gmail.com>"]
+version = "0.5.0"
+description = "Analyse email hops: hostnames, protocols, timestamps, and delays."
+readme = "README.md"
+requires-python = ">=3.11"
 license = "MIT"
+license-files = ["LICENSE.txt"]
+authors = [{ name = "Akshay Kumar", email = "akshay.kmr4321@gmail.com" }]
+keywords = ["email", "headers", "smtp"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Communications :: Email",
+]
+dependencies = ["dateparser>=1.2.2,<2"]
 
-[tool.poetry.dependencies]
-python = ">= 3.9"
-dateparser = "^1.0.0"
-pytz = "^2021.1"
+[project.urls]
+Homepage = "https://github.com/akshaykmr/emailtrail"
+Issues = "https://github.com/akshaykmr/emailtrail/issues"
+Changelog = "https://github.com/akshaykmr/emailtrail/blob/master/CHANGELOG.md"
 
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
-xmltodict = "^0.12.0"
-flake8 = "^3.9.2"
-black = "^21.8b0"
+[dependency-groups]
+dev = ["pytest>=8.4,<10", "ruff>=0.13,<1", "twine>=7,<8"]
+dataset = ["xmltodict>=0.14,<2"]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["emailtrail"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/emailtrail", "/tests", "/README.md", "/CHANGELOG.md", "/LICENSE.txt", "/pyproject.toml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+disable_test_id_escaping_and_forfeit_all_rights_to_community_support = true
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP"]

@@ -1,12 +1,12 @@
-from email.parser import HeaderParser
-import re
 import calendar
-import dateparser
-import pytz
-from typing import List
+import re
+from datetime import UTC
+from email.parser import HeaderParser
 
+import dateparser
+
+from .models import Hop, Trail
 from .utils import cleanup_text, decode_and_convert_to_unicode
-from .models import Trail, Hop
 
 
 def analyse_headers(raw_headers: str) -> Trail:
@@ -58,7 +58,7 @@ def analyse_headers(raw_headers: str) -> Trail:
     )
 
 
-def analyse_hops(received: str) -> List[Hop]:
+def analyse_hops(received: list[str] | None) -> list[Hop]:
     """
     Takes a list of `received` headers and
     creates the email trail (structured information of hops in transit)
@@ -84,11 +84,11 @@ def analyse_single_header(header: str) -> Hop:
     )
 
 
-def extract_timestamp(header: str) -> int:
+def extract_timestamp(header: str) -> int | None:
     return get_timestamp(extract_timestring(header))
 
 
-def hops_with_delay_information(hop_list: List[Hop]) -> List[Hop]:
+def hops_with_delay_information(hop_list: list[Hop]) -> list[Hop]:
     """
     For each hop sets the calculated `delay` from previous hop
     NOTE: Mutates list
@@ -172,7 +172,7 @@ def extract_protocol(header: str) -> str:
     return cleanup_text(protocol)
 
 
-def extract_timestring(header: str) -> str:
+def extract_timestring(header: str) -> str | None:
     """
     Tries to extract a timestring from a header
     Returns None or a String that *could* be a valid timestring
@@ -223,7 +223,7 @@ def strip_timezone_name(timestring: str) -> str:
     return " ".join(split)
 
 
-def get_timestamp(timestring: str) -> int:
+def get_timestamp(timestring: str | None) -> int | None:
     """Convert a timestring to unix timestamp"""
 
     if timestring is None:
@@ -233,11 +233,13 @@ def get_timestamp(timestring: str) -> int:
     if date is None:
         return None
 
-    date = date.astimezone(pytz.utc)
+    date = date.astimezone(UTC)
     return calendar.timegm(date.utctimetuple())
 
 
-def calculate_delay(current_timestamp: int, previous_timestamp: int) -> int:
+def calculate_delay(
+    current_timestamp: int | None, previous_timestamp: int | None
+) -> int:
     """Returns delay for two unix timestamps"""
     if current_timestamp is None or previous_timestamp is None:
         return 0

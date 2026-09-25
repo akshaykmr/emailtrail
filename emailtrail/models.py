@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List
 
 
 @dataclass
@@ -7,7 +6,7 @@ class Hop:
     from_host: str
     protocol: str
     received_by_host: str
-    timestamp: int
+    timestamp: int | None
     delay: int = 0  # in seconds
 
 
@@ -17,9 +16,9 @@ class Trail:
     from_address: str
     cc: str
     bcc: str
-    hops: List[Hop]
+    hops: list[Hop]
 
     @property
     def total_delay(self) -> int:
         """in seconds"""
-        return sum([hop.delay for hop in self.hops]) if self.hops else 0
+        return sum(hop.delay for hop in self.hops)

@@ -1,4 +1,5 @@
 import pytest
+
 from emailtrail import calculate_delay, get_path_delay
 
 

@@ -1,12 +1,13 @@
-from email.parser import HeaderParser
-import re
 import calendar
-import dateparser
-import pytz
+import re
+from email.parser import HeaderParser
 from typing import List
 
+import dateparser
+import pytz
+
+from .models import Hop, Trail
 from .utils import cleanup_text, decode_and_convert_to_unicode
-from .models import Trail, Hop
 
 
 def analyse_headers(raw_headers: str) -> Trail:

@@ -1,4 +1,4 @@
-from emailtrail.utils import decode_and_convert_to_unicode, cleanup_text
+from emailtrail.utils import cleanup_text, decode_and_convert_to_unicode
 
 
 def test_decode_and_convert_to_unicode():

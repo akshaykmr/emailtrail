@@ -1,10 +1,11 @@
 import pytest
+
 from emailtrail import (
+    Hop,
+    Trail,
     analyse_headers,
     analyse_single_header,
     hops_with_delay_information,
-    Trail,
-    Hop,
 )
 
 

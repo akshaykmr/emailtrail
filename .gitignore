@@ -5,6 +5,8 @@
 *.egg-info
 dist
 build
+.venv/
+.pytest_cache/
 
 delay_error.txt
 label_error.txt

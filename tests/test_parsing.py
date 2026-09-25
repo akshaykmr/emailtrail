@@ -1,6 +1,6 @@
 import pytest
 
-from emailtrail import extract_timestring, strip_timezone_name, get_timestamp
+from emailtrail import extract_timestring, get_timestamp, strip_timezone_name
 
 
 class TestTimestringParsing:

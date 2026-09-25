@@ -138,6 +138,9 @@ It means that either one or both of the servers clocks are off.
 We assume a delay of `0` for this hop.
 
 ## Contributing
+
+For publishing, see [RELEASING.md](RELEASING.md).
+
 emailtrail uses [uv](https://docs.astral.sh/uv/) for managing virtual environments and dependencies.
 - Fork the repo and clone it.
 - Install uv, then run `uv sync --locked` in the project root to install testing and linting dependencies.
@@ -163,5 +166,4 @@ In the middle of developing this module, I switched to TDD. Albeit slow for a fi
 - Forces you to think how to structure your code.
 - Less coupling, small functions with minimal to none side effects, well defined interfaces.
 - Confidence in refactoring code quickly. (Everyone loves it when their investments pay off)
-
 

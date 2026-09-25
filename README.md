@@ -8,6 +8,10 @@
 
 Analyse hops taken by an Email to reach you. Get structured information about each hop - Hostnames, Protocol used, Timestamp, and Delay. [Try it out in your browser](https://emailtrail.oorja.io/)
 
+<!-- Remove this note after publishing the next version to PyPI. -->
+> The next release is currently blocked on PyPI account recovery. The latest
+> published version is [0.4.0](https://pypi.org/project/emailtrail/0.4.0/);
+> the updates in this repository are not yet available on PyPI.
 
 **Requires Python 3.11+. CI tests Python 3.11–3.14 on Linux, macOS, and Windows.**
 
@@ -166,4 +170,3 @@ In the middle of developing this module, I switched to TDD. Albeit slow for a fi
 - Forces you to think how to structure your code.
 - Less coupling, small functions with minimal to none side effects, well defined interfaces.
 - Confidence in refactoring code quickly. (Everyone loves it when their investments pay off)
-

@@ -7,6 +7,7 @@ dist
 build
 .venv/
 .pytest_cache/
+.ruff_cache/
 
 delay_error.txt
 label_error.txt

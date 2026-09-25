@@ -9,7 +9,7 @@
 Analyse hops taken by an Email to reach you. Get structured information about each hop - Hostnames, Protocol used, Timestamp, and Delay. [Try it out in your browser](https://emailtrail.oorja.io/)
 
 
-**Tested with Python 3.9+**
+**Requires Python 3.11+. CI tests Python 3.11–3.14 on Linux, macOS, and Windows.**
 
 **In your project:** `pip install emailtrail` or `uv add emailtrail`.
 
@@ -143,6 +143,10 @@ emailtrail uses [uv](https://docs.astral.sh/uv/) for managing virtual environmen
 - Install uv, then run `uv sync --locked` in the project root to install testing and linting dependencies.
 - Run commands in the environment with `uv run`.
 - Running tests: `uv run --locked pytest`.
+- Lint and format checks: `uv run --locked ruff check .` and `uv run --locked ruff format --check .`.
+- Format code: `uv run ruff format .`.
+- Build and validate packages: `make build`.
+- Development defaults to Python 3.14; test another version with `uv run --locked --python 3.11 pytest`.
 - Run `uv lock` after changing dependency requirements and commit the updated `uv.lock`.
 - If you want to understand the code, read the test cases first. It's mostly regex tuned for some email dataset. We need to run this against more datasets to cover more edge cases (emails are wild!).
 - Make your changes -> Pass the tests -> Push to your branch -> Create pull request -> Profit ??
@@ -159,6 +163,5 @@ In the middle of developing this module, I switched to TDD. Albeit slow for a fi
 - Forces you to think how to structure your code.
 - Less coupling, small functions with minimal to none side effects, well defined interfaces.
 - Confidence in refactoring code quickly. (Everyone loves it when their investments pay off)
-
 
 

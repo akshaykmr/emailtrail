@@ -11,7 +11,7 @@ Analyse hops taken by an Email to reach you. Get structured information about ea
 
 **Tested with Python 3.9+**
 
-**In your project:** `pip install emailtrail` or if you use [poetry](https://python-poetry.org/) like me `poetry add emailtrail`
+**In your project:** `pip install emailtrail` or `uv add emailtrail`.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -138,11 +138,12 @@ It means that either one or both of the servers clocks are off.
 We assume a delay of `0` for this hop.
 
 ## Contributing
-emailtrail uses [poetry](https://python-poetry.org/) for managing virtual env and package versions.
+emailtrail uses [uv](https://docs.astral.sh/uv/) for managing virtual environments and dependencies.
 - Fork the repo and clone it.
-- In project root: `poetry install`. This installs packages required for testing and linting
-- Jump into your virutal env: `poetry shell`
-- Running tests: `pytest`
+- Install uv, then run `uv sync --locked` in the project root to install testing and linting dependencies.
+- Run commands in the environment with `uv run`.
+- Running tests: `uv run --locked pytest`.
+- Run `uv lock` after changing dependency requirements and commit the updated `uv.lock`.
 - If you want to understand the code, read the test cases first. It's mostly regex tuned for some email dataset. We need to run this against more datasets to cover more edge cases (emails are wild!).
 - Make your changes -> Pass the tests -> Push to your branch -> Create pull request -> Profit ??
 
@@ -158,7 +159,6 @@ In the middle of developing this module, I switched to TDD. Albeit slow for a fi
 - Forces you to think how to structure your code.
 - Less coupling, small functions with minimal to none side effects, well defined interfaces.
 - Confidence in refactoring code quickly. (Everyone loves it when their investments pay off)
-
 
 
 

@@ -10,10 +10,12 @@ Analyse hops taken by an Email to reach you. Get structured information about ea
 
 <!-- Remove this note after publishing the next version to PyPI. -->
 > The next release is currently blocked on PyPI account recovery. The latest
-> published version is [0.4.0](https://pypi.org/project/emailtrail/0.4.0/);
-> the updates in this repository are not yet available on PyPI.
+> published version is [0.4.0](https://pypi.org/project/emailtrail/0.4.0/), which
+> declares Python 3.9+ support but has not been validated against the newer
+> Python versions covered by this update. The Python 3.11–3.14 testing described
+> below applies to the unreleased code in this repository, not the PyPI release.
 
-**Requires Python 3.11+. CI tests Python 3.11–3.14 on Linux, macOS, and Windows.**
+**Unreleased repository code: requires Python 3.11+. CI tests Python 3.11–3.14 on Linux, macOS, and Windows.**
 
 **In your project:** `pip install emailtrail` or `uv add emailtrail`.
 

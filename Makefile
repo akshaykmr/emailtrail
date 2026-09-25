@@ -22,4 +22,4 @@ format:
 
 build:
 	uv build
-	uv run --locked twine check --strict dist/*
+	uv run --locked twine check --strict dist/*.whl dist/*.tar.gz

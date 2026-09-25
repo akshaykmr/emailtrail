@@ -160,7 +160,7 @@ supported version, use `uv run --locked --python 3.11 pytest`. The committed
 intentionally updating dependencies, and commit the updated lockfile.
 
 - Format code with `uv run ruff format .`.
-- Build distributions with `make build` (or `uv build` and `uv run twine check --strict dist/*`).
+- Build distributions with `make build` (or `uv build` and `uv run twine check --strict dist/*.whl dist/*.tar.gz`).
 - The optional dataset helper uses `uv run --group dataset python -m analyse_dataset.run`;
   provide your own XML dataset as described in that script.
 - If you want to understand the code, read the test cases first. It's mostly regex tuned for some email dataset. We need to run this against more datasets to cover more edge cases (emails are wild!).
@@ -181,6 +181,5 @@ In the middle of developing this module, I switched to TDD. Albeit slow for a fi
 - Forces you to think how to structure your code.
 - Less coupling, small functions with minimal to none side effects, well defined interfaces.
 - Confidence in refactoring code quickly. (Everyone loves it when their investments pay off)
-
 
 

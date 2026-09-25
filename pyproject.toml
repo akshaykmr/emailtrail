@@ -5,15 +5,15 @@ description = "Analyse hops taken by an Email to reach you. Get structured infor
 authors = [{ name = "Akshay Kumar", email = "akshay.kmr4321@gmail.com" }]
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.9"
-dependencies = ["dateparser>=1.0.0,<2", "pytz>=2021.1,<2022"]
+requires-python = ">=3.11"
+dependencies = ["dateparser>=1.2.2,<2", "pytz>=2025.2"]
 
 [dependency-groups]
 dev = [
-    "pytest>=6.2.5,<7",
-    "xmltodict>=0.12.0,<0.13",
-    "flake8>=3.9.2,<4",
-    "black>=21.8b0,<22",
+    "pytest>=8.4,<10",
+    "xmltodict>=0.14,<2",
+    "ruff>=0.13,<1",
+    "twine>=7,<8",
 ]
 
 [build-system]
@@ -22,3 +22,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["emailtrail"]
+
+[tool.ruff]
+include = ["*.py", "*.pyi"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

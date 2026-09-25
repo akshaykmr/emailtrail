@@ -9,7 +9,8 @@
 Analyse hops taken by an Email to reach you. Get structured information about each hop - Hostnames, Protocol used, Timestamp, and Delay. [Try it out in your browser](https://emailtrail.oorja.io/)
 
 <!-- Remove this note after publishing the next version to PyPI. -->
-> The next release is currently blocked on PyPI account recovery. The latest
+> The next release is currently blocked on
+> [PyPI account recovery](https://github.com/pypi/support/issues/12422). The latest
 > published version is [0.4.0](https://pypi.org/project/emailtrail/0.4.0/), which
 > declares Python 3.9+ support but has not been validated against the newer
 > Python versions covered by this update. The Python 3.11–3.14 testing described
